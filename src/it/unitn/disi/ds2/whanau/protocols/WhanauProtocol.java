@@ -8,6 +8,13 @@ import peersim.core.Protocol;
  */
 public class WhanauProtocol implements Protocol {
 
+    /**
+     * Empty constructor method
+     * @param s a random string, it can be null
+     */
+    public WhanauProtocol(String s) {
+    }
+
     @Override
     public Object clone() {
         return null;

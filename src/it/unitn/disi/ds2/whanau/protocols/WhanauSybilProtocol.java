@@ -8,6 +8,13 @@ import peersim.core.MaliciousProtocol;
  */
 public class WhanauSybilProtocol implements MaliciousProtocol {
 
+    /**
+     * Empty constructor method
+     * @param s a random string, it can be null
+     */
+    public WhanauSybilProtocol(String s) {
+    }
+
     @Override
     public Object clone() {
         return null;
