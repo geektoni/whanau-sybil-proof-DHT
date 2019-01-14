@@ -64,11 +64,40 @@ public class WhanauSetup implements Control {
             {
                 fingers(Network.get(j), i);
             }
+
+            // Set up the successors for each layer
+            for (int j=0; j< Network.size(); j++)
+            {
+                successors(Network.get(j), i);
+            }
         }
 
         return true;
     }
 
+    private void successors(Node node, int layer)
+    {
+        WhanauProtocol source = (WhanauProtocol) node.getProtocol(this.pid);
+        ArrayList<Pair<Integer, String>> all_elements = new ArrayList<>();
+        int current_key = source.getIdOfLayer(layer);
+        for (int i = 0; i < this.s; i++) {
+            Node n = this.randomWalk(node, w);
+            WhanauProtocol casted_node = (WhanauProtocol) n.getProtocol(this.pid);
+
+            // Add the found values to the successor table
+            for (Pair<Integer, String> p :  casted_node.successorsSample(current_key))
+            {
+               all_elements.add(p);
+            }
+        }
+        source.addToSuccessors(all_elements, layer);
+    }
+
+    /**
+     * Set up the fingers for each node.
+     * @param node
+     * @param layer
+     */
     private void fingers(Node node, int layer) {
         WhanauProtocol source = (WhanauProtocol) node.getProtocol(this.pid);
         ArrayList<Pair<Integer, WhanauProtocol>> fings = new ArrayList<>();

@@ -3,10 +3,7 @@ package it.unitn.disi.ds2.whanau.protocols;
 import it.unitn.disi.ds2.whanau.utils.Pair;
 import peersim.core.*;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-
-import java.util.Random;
+import java.util.*;
 
 /**
  * This class will contain all the methods specified
@@ -23,7 +20,7 @@ public class WhanauProtocol implements Protocol {
         this.prefix = prefix;
         this.rng = new Random();
         this.neighbors = new ArrayList<>();
-        this.stored_records = new Hashtable<>();
+        this.stored_records = new TreeMap<>();
     }
 
     public void setUpInternalTables(int f, int s, int d, int l, int w) {
@@ -100,6 +97,32 @@ public class WhanauProtocol implements Protocol {
         return ids.get(layer);
     }
 
+    /**
+     * Return a sample of successors from the stored records
+     * which are greater than the key.
+     * @param key
+     * @return
+     */
+    public ArrayList<Pair<Integer, String>> successorsSample(int key)
+    {
+        ArrayList<Pair<Integer, String>> successor_sample = new ArrayList<>();
+        SortedMap<Integer, String> greater_value = stored_records.tailMap(key);
+        int counter = 0;
+        for (Integer k : greater_value.keySet())
+        {
+            if (counter >= T) break;
+            successor_sample.add(new Pair<>(k, greater_value.get(k)));
+            counter++;
+        }
+        return successor_sample;
+    }
+
+    public void addToSuccessors(ArrayList<Pair<Integer, String>> value, int layer)
+    {
+        assert (layer < this.succ.size() && layer >=0);
+
+        this.succ.add(layer, value);
+    }
 
     @Override
     public Object clone() {
@@ -124,6 +147,8 @@ public class WhanauProtocol implements Protocol {
 
     String prefix;
 
-    Hashtable<Integer, String> stored_records;
+    TreeMap<Integer, String> stored_records;
+
+    private static int T = 1;
 
 }
