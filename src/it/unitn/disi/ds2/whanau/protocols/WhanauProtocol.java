@@ -65,6 +65,41 @@ public class WhanauProtocol implements Protocol {
         return new Pair<>(random_key, this.stored_records.get(random_key));
     }
 
+    /**
+     * Return a random finger from the specified layer.
+     * @param layer
+     * @return
+     */
+    public Pair<Integer, WhanauProtocol> randomRecordFingers(int layer)
+    {
+        // Return null if the layer is greater than the actual size.
+        assert (layer < this.fingers.size() && layer >=0);
+
+        int k_size = this.fingers.get(layer).size();
+        int random_id = rng.nextInt(Integer.MAX_VALUE)%k_size;
+        return this.fingers.get(layer).get(random_id);
+
+    }
+
+    public void setIdForLayer(int id, int layer)
+    {
+        assert (layer < this.ids.size() && layer >=0);
+
+        ids.add(layer, id);
+    }
+
+    public void setFingerForLayer(ArrayList<Pair<Integer, WhanauProtocol>> fingers, int layer)
+    {
+        assert (layer < this.fingers.size() && layer >=0);
+        this.fingers.add(layer, fingers);
+    }
+
+    public Integer getIdOfLayer(int layer)
+    {
+        assert (layer < this.ids.size() && layer >=0);
+        return ids.get(layer);
+    }
+
 
     @Override
     public Object clone() {

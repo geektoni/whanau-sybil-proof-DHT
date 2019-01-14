@@ -8,6 +8,7 @@ import peersim.core.IdleProtocol;
 import peersim.core.Network;
 import peersim.core.Node;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class WhanauSetup implements Control {
@@ -37,6 +38,12 @@ public class WhanauSetup implements Control {
             node.addToStoredRecords(value);
         }
 
+        // Set up internal tables for the nodes
+        for (int i = 0; i < Network.size(); i++) {
+            WhanauProtocol node = (WhanauProtocol) Network.get(i).getProtocol(this.pid);
+            node.setUpInternalTables(this.f, this.s, this.d, this.l, this.w);
+        }
+
         // Set up the db table
         for (int i=0; i< Network.size(); i++)
         {
@@ -46,14 +53,54 @@ public class WhanauSetup implements Control {
         // For each of the levels set up the other tables
         for (int i=0; i<l; i++)
         {
+            // Set up the ids for each layer
             for (int j=0; j< Network.size(); j++)
             {
-                //WhanauProtocol node = (WhanauProtocol) Network.get(i);
+                chooseId(Network.get(j), i);
+            }
 
+            // Set up the fingers for each layer
+            for (int j=0; j< Network.size(); j++)
+            {
+                fingers(Network.get(j), i);
             }
         }
 
         return true;
+    }
+
+    private void fingers(Node node, int layer) {
+        WhanauProtocol source = (WhanauProtocol) node.getProtocol(this.pid);
+        ArrayList<Pair<Integer, WhanauProtocol>> fings = new ArrayList<>();
+        for (int i = 0; i < f; i++) {
+            Node n = randomWalk(node, w);
+
+            WhanauProtocol node_casted = (WhanauProtocol) n.getProtocol(this.pid);
+            Integer ids = node_casted.getIdOfLayer(layer);
+
+            Pair<Integer, WhanauProtocol> pair = new Pair<>(ids, node_casted);
+            fings.add(pair);
+        }
+        source.setFingerForLayer(fings, layer);
+    }
+
+    /**
+     * Choose an ID for the specified layer
+     * @param node
+     * @param layer
+     * @return
+     */
+    private void chooseId(Node node, int layer)
+    {
+        WhanauProtocol n = (WhanauProtocol) node.getProtocol(this.pid);
+        Integer id = -1;
+        if (layer == 0)
+        {
+            id= n.randomRecord().first;
+        } else {
+            id= n.randomRecordFingers(layer-1).first;
+        }
+        n.setIdForLayer(id, layer);
     }
 
     /**
