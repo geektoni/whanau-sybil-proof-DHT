@@ -17,6 +17,7 @@ public class WhanauWireNetwork extends WireGraph {
     public WhanauWireNetwork(String prefix)
     {
         super(prefix);
+        this.pid = Configuration.getPid(prefix + "." + prot);
         p = Configuration.getDouble(prefix + ".probability",0.1);
         graphGenerator = new GnpRandomGraphGenerator<Integer, DefaultEdge>(Network.size(), p, 42);
     }
@@ -32,10 +33,11 @@ public class WhanauWireNetwork extends WireGraph {
 
         // Loop over all nodes and add the links between them.
         // This way we will build the Peersim topology.
+        // Moreover, we will build their neighbours array.
         Set<DefaultEdge> edgs = g.edgeSet();
         for (DefaultEdge e : edgs)
         {
-                graph.setEdge(g.getEdgeSource(e), g.getEdgeTarget(e));
+            graph.setEdge(g.getEdgeSource(e), g.getEdgeTarget(e));
         }
     }
 
@@ -63,9 +65,14 @@ public class WhanauWireNetwork extends WireGraph {
         return g;
     }
 
+    private int pid;
+
     /** Probability of adding an edge between two nodes */
     private double p;
 
     /** Graph generator */
     private GnpRandomGraphGenerator<Integer, DefaultEdge> graphGenerator;
+
+    static private String prot = "protocol";
+
 }

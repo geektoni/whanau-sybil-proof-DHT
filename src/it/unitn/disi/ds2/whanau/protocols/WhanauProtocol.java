@@ -1,10 +1,12 @@
 package it.unitn.disi.ds2.whanau.protocols;
 
 import it.unitn.disi.ds2.whanau.utils.Pair;
-import peersim.core.Protocol;
+import peersim.core.*;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+
+import java.util.Random;
 
 /**
  * This class will contain all the methods specified
@@ -14,9 +16,14 @@ public class WhanauProtocol implements Protocol {
 
     /**
      * Empty constructor method
-     * @param str a random string, it can be null
+     *
+     * @param prefix a random string, it can be null
      */
-    public WhanauProtocol(String str) {
+    public WhanauProtocol(String prefix) {
+        this.prefix = prefix;
+        this.rng = new Random();
+        this.neighbors = new ArrayList<>();
+        this.stored_records = new Hashtable<>();
     }
 
     public void setUpInternalTables(int f, int s, int d, int l, int w) {
@@ -33,44 +40,36 @@ public class WhanauProtocol implements Protocol {
         this.ids = new ArrayList<Integer>(max_layers);
     }
 
-    @Override
-    public Object clone() {
-        return null;
+    /**
+     * Add a value to the record stored by this node
+     * (if not already present).
+     *
+     * @param key   hash key of the given value.
+     * @param value the string value which will be recorded.
+     */
+    public void addToStoredRecords(Pair<Integer, String>value) {
+        if (!this.stored_records.containsKey(value.first)) {
+            this.stored_records.put(value.first, value.second);
+        }
     }
 
     /**
-     * Methods used for the setup of the network
+     * Extract a random record from the node database
+     * @return a random <key,value pair>
      */
-
-    public void setup() {};
-
-    private void sampleRecords() {};
-
-    private void sampleRecord() {};
-
-    private void randomWalk() {};
-
-    private void chooseId() {};
-
-    private void fingers() {};
-
-    private void successors() {};
-
-    private void successorSample() {};
+    public Pair<Integer, String> randomRecord()
+    {
+        int k_size = this.stored_records.keySet().size();
+        Integer random_key = (Integer) this.stored_records.keySet().
+                toArray()[rng.nextInt(Integer.MAX_VALUE)%k_size];
+        return new Pair<>(random_key, this.stored_records.get(random_key));
+    }
 
 
-    /**
-     * Methods used to lookup a value.
-     */
-
-    public void lookup() {};
-
-    private void _try() {};
-
-    private void chooseFinger() {};
-
-    private void query() {};
-
+    @Override
+    public Object clone() {
+        return new WhanauProtocol(this.prefix);
+    }
 
     /* Private variables */
     ArrayList<Integer> ids;
@@ -83,5 +82,13 @@ public class WhanauProtocol implements Protocol {
     int max_fingers;
     int max_successors;
     int max_layers;
+
+    Random rng;
+
+    ArrayList<Node> neighbors;
+
+    String prefix;
+
+    Hashtable<Integer, String> stored_records;
 
 }
