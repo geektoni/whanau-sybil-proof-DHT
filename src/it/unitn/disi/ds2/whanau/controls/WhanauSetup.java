@@ -75,7 +75,7 @@ public class WhanauSetup implements Control {
         return true;
     }
 
-    private void successors(Node node, int layer)
+    protected void successors(Node node, int layer)
     {
         WhanauProtocol source = (WhanauProtocol) node.getProtocol(this.pid);
         ArrayList<Pair<Integer, String>> all_elements = new ArrayList<>();
@@ -98,7 +98,7 @@ public class WhanauSetup implements Control {
      * @param node
      * @param layer
      */
-    private void fingers(Node node, int layer) {
+    protected void fingers(Node node, int layer) {
         WhanauProtocol source = (WhanauProtocol) node.getProtocol(this.pid);
         ArrayList<Pair<Integer, WhanauProtocol>> fings = new ArrayList<>();
         for (int i = 0; i < f; i++) {
@@ -119,7 +119,7 @@ public class WhanauSetup implements Control {
      * @param layer
      * @return
      */
-    private void chooseId(Node node, int layer)
+    protected void chooseId(Node node, int layer)
     {
         WhanauProtocol n = (WhanauProtocol) node.getProtocol(this.pid);
         Integer id = -1;
@@ -136,7 +136,7 @@ public class WhanauSetup implements Control {
      * Sample records with a random walk starting from the given node.
      * @param node
      */
-    private void sampleRecords(Node node) {
+    protected void sampleRecords(Node node) {
         for (int i =0; i<d; i++)
         {
             Node random_node = this.randomWalk(node, this.l);
@@ -152,7 +152,7 @@ public class WhanauSetup implements Control {
      * @param length Length of the random walk.
      * @return Target node.
      */
-    private Node randomWalk(Node source, int length)
+    protected Node randomWalk(Node source, int length)
     {
         Node target = source;
         IdleProtocol l_source = (IdleProtocol) source.getProtocol(this.lid);
@@ -166,8 +166,6 @@ public class WhanauSetup implements Control {
         return target;
     }
 
-
-
     /* Possible parameters */
     static private String prot = "protocol";
     static private String prot_link = "protocol_link";
@@ -177,14 +175,14 @@ public class WhanauSetup implements Control {
     static private String max_fingers = "max_fingers";
     static private String mixing_time = "mixing_time";
 
-    private int pid;
-    private int lid;
+    protected int pid;
+    protected int lid;
 
-    private Random rng;
+    protected Random rng;
 
-    private int f;
-    private int s;
-    private int d;
-    private int l;
-    private int w;
+    protected int f;
+    protected int s;
+    protected int d;
+    protected int l;
+    protected int w;
 }
