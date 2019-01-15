@@ -38,10 +38,10 @@ public class WhanauProtocol implements Protocol {
         this.max_fingers = f;
         this.max_db_size = d;
 
-        this.db = new Hashtable<Integer, String>();
-        this.fingers = new ArrayList<ArrayList<Pair<Integer, WhanauProtocol>>>(max_layers);
-        this.succ = new ArrayList<ArrayList<Pair<Integer, String>>>(max_layers);
-        this.ids = new ArrayList<Integer>(max_layers);
+        this.db = new Hashtable<>();
+        this.fingers = new ArrayList<>(max_layers);
+        this.succ = new ArrayList<>(max_layers);
+        this.ids = new ArrayList<>(max_layers);
     }
 
     /**
@@ -158,22 +158,22 @@ public class WhanauProtocol implements Protocol {
     }
 
     /* Private variables */
-    ArrayList<Integer> ids;
-    ArrayList<ArrayList<Pair<Integer, WhanauProtocol>>> fingers;
-    ArrayList<ArrayList<Pair<Integer, String>>> succ;
-    Hashtable<Integer, String> db;
+    private ArrayList<Integer> ids;
+    private ArrayList<ArrayList<Pair<Integer, WhanauProtocol>>> fingers;
+    private ArrayList<ArrayList<Pair<Integer, String>>> succ;
+    private Hashtable<Integer, String> db;
 
-    int max_db_size;
-    int mixing_time;
-    int max_fingers;
-    int max_successors;
-    int max_layers;
+    private int max_db_size;
+    private int mixing_time;
+    private int max_fingers;
+    private int max_successors;
+    private int max_layers;
 
-    Random rng;
+    private Random rng;
 
-    String prefix;
+    private String prefix;
 
-    TreeMap<Integer, String> stored_records;
+    private TreeMap<Integer, String> stored_records;
 
     private static int T = 1;
 
