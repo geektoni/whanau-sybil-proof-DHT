@@ -12,8 +12,18 @@ import peersim.graph.Graph;
 import java.util.Set;
 import java.util.function.Supplier;
 
+/**
+ * This class implements the methods used to create the network
+ * topology. It can easily generate a random topology of given
+ * size or it can build a network given a pre-defined topology
+ * (like the graph of a social network.)
+ */
 public class WhanauWireNetwork extends WireGraph {
 
+    /**
+     * Constructor.
+     * @param prefix the prefix used inside the configuration file.
+     */
     public WhanauWireNetwork(String prefix)
     {
         super(prefix);
@@ -65,6 +75,7 @@ public class WhanauWireNetwork extends WireGraph {
         return g;
     }
 
+    /* ID of the linkable protocol which will be present in each node */
     private int pid;
 
     /** Probability of adding an edge between two nodes */
@@ -73,6 +84,7 @@ public class WhanauWireNetwork extends WireGraph {
     /** Graph generator */
     private GnpRandomGraphGenerator<Integer, DefaultEdge> graphGenerator;
 
+    /* Configuration parameter identifier for the linkable protocol*/
     static private String prot = "protocol";
 
 }

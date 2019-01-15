@@ -11,8 +11,17 @@ import peersim.core.Node;
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * Control class which implements the logic of the setup()
+ * method presented in the Whanau's paper. This class enables
+ * us to build the internal tables of each nodes.
+ */
 public class WhanauSetup implements Control {
 
+    /**
+     * Constructor
+     * @param prefix
+     */
     public WhanauSetup(String prefix) {
         this.pid = Configuration.getPid(prefix + "." + prot);
         this.lid = Configuration.getPid(prefix + "." + prot_link);
@@ -26,9 +35,13 @@ public class WhanauSetup implements Control {
 
     }
 
+    /**
+     * Execute the setup action for all the nodes.
+     * @return true if it succeded.
+     */
     public boolean execute() {
 
-        // For each node, store inside them a value.
+        // For each node, store inside them a <key,value>.
         // The key is increasing, while the value it is just
         // a random integer.
         int key=0;
@@ -38,7 +51,8 @@ public class WhanauSetup implements Control {
             node.addToStoredRecords(value);
         }
 
-        // Set up internal tables for the nodes
+        // Initialize the internal tables of each node
+        // (ids, fingers, successors, db).
         for (int i = 0; i < Network.size(); i++) {
             WhanauProtocol node = (WhanauProtocol) Network.get(i).getProtocol(this.pid);
             node.setUpInternalTables(this.f, this.s, this.d, this.l, this.w);
@@ -75,6 +89,12 @@ public class WhanauSetup implements Control {
         return true;
     }
 
+    /**
+     * Set up the successors <key, value> pairs given a starting
+     * node and the target layer.
+     * @param node starting node
+     * @param layer the layer we are considering
+     */
     protected void successors(Node node, int layer)
     {
         WhanauProtocol source = (WhanauProtocol) node.getProtocol(this.pid);
@@ -94,9 +114,9 @@ public class WhanauSetup implements Control {
     }
 
     /**
-     * Set up the fingers for each node.
-     * @param node
-     * @param layer
+     * Set up one layer the finger table for each node.
+     * @param node the given node.
+     * @param layer the target layer.
      */
     protected void fingers(Node node, int layer) {
         WhanauProtocol source = (WhanauProtocol) node.getProtocol(this.pid);
@@ -114,10 +134,9 @@ public class WhanauSetup implements Control {
     }
 
     /**
-     * Choose an ID for the specified layer
-     * @param node
-     * @param layer
-     * @return
+     * Choose an ID for the given node at the specified layer.
+     * @param node the given node
+     * @param layer the given layer
      */
     protected void chooseId(Node node, int layer)
     {
@@ -146,11 +165,11 @@ public class WhanauSetup implements Control {
     }
 
     /**
-     * Starting from the source Node, perform a random walk of length l on
-     * the network.
+     * Starting from the source Node, perform a random walk of specified length on
+     * the network and return the final node.
      * @param source Starting node of the walk.
      * @param length Length of the random walk.
-     * @return Target node.
+     * @return Final node.
      */
     protected Node randomWalk(Node source, int length)
     {

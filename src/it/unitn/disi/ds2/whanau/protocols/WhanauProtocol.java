@@ -6,23 +6,30 @@ import peersim.core.*;
 import java.util.*;
 
 /**
- * This class will contain all the methods specified
- * by the protocol. See Section 6 of the original paper.
+ * Class which contains the tables and values specified
+ * by the Whanau protocol. It also provides some helper
+ * methods to access those values.
  */
 public class WhanauProtocol implements Protocol {
 
     /**
-     * Empty constructor method
-     *
-     * @param prefix a random string, it can be null
+     * Constructor
+     * @param prefix identifier used in the configuration file
      */
     public WhanauProtocol(String prefix) {
         this.prefix = prefix;
         this.rng = new Random();
-        this.neighbors = new ArrayList<>();
         this.stored_records = new TreeMap<>();
     }
 
+    /**
+     * Set up the internal tables of the node.
+     * @param f Max numbers of fingers per layer we can have.
+     * @param s Max numbers of successors per layer we can have.
+     * @param d Max size of the db.
+     * @param l Max number of layers.
+     * @param w Mixing time of the graph.
+     */
     public void setUpInternalTables(int f, int s, int d, int l, int w) {
         // Set up the constraint for the various tables;
         this.mixing_time = w;
@@ -38,11 +45,8 @@ public class WhanauProtocol implements Protocol {
     }
 
     /**
-     * Add a value to the record stored by this node
-     * (if not already present).
-     *
-     * @param key   hash key of the given value.
-     * @param value the string value which will be recorded.
+     * Add a value to the record stored by this node if not already present.
+     * @param value Pair <key, value> which will be memorized.
      */
     public void addToStoredRecords(Pair<Integer, String>value) {
         if (!this.stored_records.containsKey(value.first)) {
@@ -51,7 +55,7 @@ public class WhanauProtocol implements Protocol {
     }
 
     /**
-     * Extract a random record from the node database
+     * Extract a random record from the node database.
      * @return a random <key,value pair>
      */
     public Pair<Integer, String> randomRecord()
@@ -64,8 +68,8 @@ public class WhanauProtocol implements Protocol {
 
     /**
      * Return a random finger from the specified layer.
-     * @param layer
-     * @return
+     * @param layer the given layer
+     * @return a random finger from the given layer.
      */
     public Pair<Integer, WhanauProtocol> randomRecordFingers(int layer)
     {
@@ -78,6 +82,11 @@ public class WhanauProtocol implements Protocol {
 
     }
 
+    /**
+     * Set an id for the specific layer.
+     * @param id the given id.
+     * @param layer the given layer.
+     */
     public void setIdForLayer(int id, int layer)
     {
         assert (layer < this.ids.size() && layer >=0);
@@ -85,12 +94,22 @@ public class WhanauProtocol implements Protocol {
         ids.add(layer, id);
     }
 
+    /**
+     * Set the fingers for a specified layer.
+     * @param fingers the fingers.
+     * @param layer the layers.
+     */
     public void setFingerForLayer(ArrayList<Pair<Integer, WhanauProtocol>> fingers, int layer)
     {
         assert (layer < this.fingers.size() && layer >=0);
         this.fingers.add(layer, fingers);
     }
 
+    /**
+     * Get the id of a layer.
+     * @param layer the given layer.
+     * @return the ID of that layer
+     */
     public Integer getIdOfLayer(int layer)
     {
         assert (layer < this.ids.size() && layer >=0);
@@ -100,8 +119,8 @@ public class WhanauProtocol implements Protocol {
     /**
      * Return a sample of successors from the stored records
      * which are greater than the key.
-     * @param key
-     * @return
+     * @param key the given key
+     * @return an array with a sample of the successors.
      */
     public ArrayList<Pair<Integer, String>> successorsSample(int key)
     {
@@ -117,6 +136,11 @@ public class WhanauProtocol implements Protocol {
         return successor_sample;
     }
 
+    /**
+     * Add successors to a given layer.
+     * @param value the successors.
+     * @param layer the given layer.
+     */
     public void addToSuccessors(ArrayList<Pair<Integer, String>> value, int layer)
     {
         assert (layer < this.succ.size() && layer >=0);
@@ -124,6 +148,10 @@ public class WhanauProtocol implements Protocol {
         this.succ.add(layer, value);
     }
 
+    /**
+     * Clone method.
+     * @return a cloned instance.
+     */
     @Override
     public Object clone() {
         return new WhanauProtocol(this.prefix);
@@ -142,8 +170,6 @@ public class WhanauProtocol implements Protocol {
     int max_layers;
 
     Random rng;
-
-    ArrayList<Node> neighbors;
 
     String prefix;
 
