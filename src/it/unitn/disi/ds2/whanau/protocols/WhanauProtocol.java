@@ -190,6 +190,34 @@ public class WhanauProtocol implements Protocol {
         return new WhanauProtocol(this.prefix);
     }
 
+
+    public ArrayList<Integer> getIds() {
+        return ids;
+    }
+
+    public ArrayList<ArrayList<Pair<Integer, Node>>> getFingers() {
+        return fingers;
+    }
+
+    public ArrayList<ArrayList<Pair<Integer, String>>> getSucc() {
+        return succ;
+    }
+
+    public Hashtable<Integer, String> getDb() {
+        return db;
+    }
+
+    public TreeMap<Integer, String> getStored_records() {
+        return stored_records;
+    }
+
+    public void addToDb(Pair<Integer, String> value)
+    {
+        if (!this.db.containsKey(value.first)) {
+            this.db.put(value.first, value.second);
+        }
+    }
+
     /* Private variables */
     private ArrayList<Integer> ids;
     private ArrayList<ArrayList<Pair<Integer, Node>>> fingers;

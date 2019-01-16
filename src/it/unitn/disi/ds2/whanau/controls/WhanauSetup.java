@@ -44,9 +44,8 @@ public class WhanauSetup implements Control {
         // For each node, store inside them a <key,value>.
         // The key is increasing, while the value it is just
         // a random integer.
-        int key=0;
         for (int i = 0; i < Network.size(); i++) {
-            Pair<Integer, String> value = new Pair<Integer, String>(key, String.valueOf(rng.nextInt()));
+            Pair<Integer, String> value = new Pair<Integer, String>(rng.nextInt(Integer.MAX_VALUE), getRandomIpAddress());
             WhanauProtocol node = (WhanauProtocol) Network.get(i).getProtocol(this.pid);
             node.addToStoredRecords(value);
         }
@@ -85,7 +84,6 @@ public class WhanauSetup implements Control {
                 successors(Network.get(j), i);
             }
         }
-
         return true;
     }
 
@@ -160,7 +158,7 @@ public class WhanauSetup implements Control {
         {
             Node random_node = this.randomWalk(node, this.l);
             Pair<Integer, String> random_record = ((WhanauProtocol) random_node.getProtocol(this.pid)).randomRecord();
-            ((WhanauProtocol) node.getProtocol(this.pid)).addToStoredRecords(random_record);
+            ((WhanauProtocol) node.getProtocol(this.pid)).addToDb(random_record);
         }
     }
 
@@ -183,6 +181,16 @@ public class WhanauSetup implements Control {
             l_source = tmp;
         }
         return target;
+    }
+
+    /**
+     * Get a randomly generated IP address
+     * @return
+     */
+    protected String getRandomIpAddress()
+    {
+        return rng.nextInt(256) + "." + rng.nextInt(256) + "."
+                + rng.nextInt(256) + "." + rng.nextInt(256);
     }
 
     /* Possible parameters */

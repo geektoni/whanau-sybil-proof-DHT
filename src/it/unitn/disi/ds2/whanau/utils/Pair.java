@@ -12,4 +12,9 @@ public class Pair<X, Y> {
         this.first = x;
         this.second = y;
     }
+
+    @Override
+    public String toString() {
+        return String.format("<%s, %s>", this.first, this.second);
+    }
 }

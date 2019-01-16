@@ -1,9 +1,8 @@
 package it.unitn.disi.ds2.whanau.controls;
 
-import org.jgrapht.generate.GnpRandomGraphGenerator;
+import org.jgrapht.generate.WattsStrogatzGraphGenerator;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultUndirectedGraph;
-import org.jgrapht.io.*;
 import org.jgrapht.util.SupplierUtil;
 import peersim.config.Configuration;
 import peersim.core.Network;
@@ -11,11 +10,8 @@ import peersim.dynamics.WireGraph;
 import peersim.graph.Graph;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.Reader;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -39,7 +35,7 @@ public class WhanauWireNetwork extends WireGraph {
         p = Configuration.getDouble(prefix + ".probability",0.1);
         this.networkFilename = Configuration.getString(prefix+"."+socialNetworkFilename,"");
 
-        graphGenerator = new GnpRandomGraphGenerator<Integer, DefaultEdge>(Network.size(), p, 42);
+        graphGenerator = new WattsStrogatzGraphGenerator<Integer, DefaultEdge>(Network.size(), 30, p);
     }
 
     /**
@@ -65,6 +61,7 @@ public class WhanauWireNetwork extends WireGraph {
         for (DefaultEdge e : edgs)
         {
             graph.setEdge(g.getEdgeSource(e), g.getEdgeTarget(e));
+            graph.setEdge(g.getEdgeTarget(e), g.getEdgeSource(e));
         }
     }
 
@@ -142,7 +139,7 @@ public class WhanauWireNetwork extends WireGraph {
     private String networkFilename;
 
     /** Graph generator */
-    private GnpRandomGraphGenerator<Integer, DefaultEdge> graphGenerator;
+    private WattsStrogatzGraphGenerator<Integer, DefaultEdge> graphGenerator;
 
     /* Configuration parameter identifier for the linkable protocol*/
     static private String prot = "protocol";
