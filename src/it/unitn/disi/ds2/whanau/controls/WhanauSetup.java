@@ -120,14 +120,14 @@ public class WhanauSetup implements Control {
      */
     protected void fingers(Node node, int layer) {
         WhanauProtocol source = (WhanauProtocol) node.getProtocol(this.pid);
-        ArrayList<Pair<Integer, WhanauProtocol>> fings = new ArrayList<>();
+        ArrayList<Pair<Integer, Node>> fings = new ArrayList<>();
         for (int i = 0; i < f; i++) {
             Node n = randomWalk(node, w);
 
             WhanauProtocol node_casted = (WhanauProtocol) n.getProtocol(this.pid);
             Integer ids = node_casted.getIdOfLayer(layer);
 
-            Pair<Integer, WhanauProtocol> pair = new Pair<>(ids, node_casted);
+            Pair<Integer, Node> pair = new Pair<>(ids, n);
             fings.add(pair);
         }
         source.setFingerForLayer(fings, layer);

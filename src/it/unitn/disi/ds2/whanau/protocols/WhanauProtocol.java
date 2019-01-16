@@ -71,7 +71,7 @@ public class WhanauProtocol implements Protocol {
      * @param layer the given layer
      * @return a random finger from the given layer.
      */
-    public Pair<Integer, WhanauProtocol> randomRecordFingers(int layer)
+    public Pair<Integer, Node> randomRecordFingers(int layer)
     {
         // Return null if the layer is greater than the actual size.
         assert (layer < this.fingers.size() && layer >=0);
@@ -99,7 +99,7 @@ public class WhanauProtocol implements Protocol {
      * @param fingers the fingers.
      * @param layer the layers.
      */
-    public void setFingerForLayer(ArrayList<Pair<Integer, WhanauProtocol>> fingers, int layer)
+    public void setFingerForLayer(ArrayList<Pair<Integer, Node>> fingers, int layer)
     {
         assert (layer < this.fingers.size() && layer >=0);
         this.fingers.add(layer, fingers);
@@ -149,6 +149,39 @@ public class WhanauProtocol implements Protocol {
     }
 
     /**
+     * Return the value of the key at the given layer
+     * @param key the key
+     * @param layer layer
+     * @return the returned value
+     */
+    public String getValueOfKey(Integer key, int layer)
+    {
+        assert (layer >=0 && layer < succ.size());
+
+        for (Pair<Integer, String> successor : succ.get(layer))
+        {
+            if (successor.first.equals(key))
+                return successor.second;
+        }
+        return null;
+    }
+
+    public boolean isInFingers(Pair<Integer, Node> fing, Integer layer)
+    {
+        assert (layer >=0 && layer < fingers.size());
+        for (Pair<Integer, Node> f : fingers.get(layer))
+            if (f.first.equals(fing.first) && f.second.equals(fing.second))
+                return true;
+        return false;
+    }
+
+    public ArrayList<Pair<Integer, Node>> getFingersForLayer(int layer)
+    {
+        assert (layer >=0 && layer < fingers.size());
+        return this.fingers.get(layer);
+    }
+
+    /**
      * Clone method.
      * @return a cloned instance.
      */
@@ -159,7 +192,7 @@ public class WhanauProtocol implements Protocol {
 
     /* Private variables */
     private ArrayList<Integer> ids;
-    private ArrayList<ArrayList<Pair<Integer, WhanauProtocol>>> fingers;
+    private ArrayList<ArrayList<Pair<Integer, Node>>> fingers;
     private ArrayList<ArrayList<Pair<Integer, String>>> succ;
     private Hashtable<Integer, String> db;
 
