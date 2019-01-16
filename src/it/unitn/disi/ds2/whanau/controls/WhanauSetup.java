@@ -9,6 +9,7 @@ import peersim.core.Network;
 import peersim.core.Node;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 /**
@@ -84,6 +85,21 @@ public class WhanauSetup implements Control {
                 successors(Network.get(j), i);
             }
         }
+
+        // For each node, sort their fingers and succ tables
+        for (int j=0; j< Network.size(); j++)
+        {
+            WhanauProtocol node = (WhanauProtocol) Network.get(j).getProtocol(this.pid);
+            for (ArrayList<Pair<Integer, Node>> list : node.getFingers())
+            {
+                list.sort(new Pair.FingersComparator());
+            }
+            for (ArrayList<Pair<Integer, String>> list : node.getSucc())
+            {
+                list.sort(new Pair.SuccComparator());
+            }
+        }
+
         return true;
     }
 
