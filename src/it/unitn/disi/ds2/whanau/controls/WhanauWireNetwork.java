@@ -99,46 +99,6 @@ public class WhanauWireNetwork extends WireGraph {
      */
     private org.jgrapht.Graph<Integer, DefaultEdge> readTopologyFromFile()
     {
-        /*
-        VertexProvider<Integer> vertexProvider = new VertexProvider<Integer>() {
-            @Override
-            public Integer buildVertex(String s, Map<String, Attribute> map) {
-                return Integer.parseInt(s);
-            }
-        };
-
-        EdgeProvider<Integer,DefaultEdge> edgeProvider = new EdgeProvider() {
-            @Override
-            public Object buildEdge(Object o, Object v1, String s, Map map) {
-                return new DefaultEdge();
-            }
-        };
-
-        Supplier<Integer> vSupplier = new Supplier<Integer>()
-        {
-            private int id = 0;
-
-            @Override
-            public Integer get()
-            {
-                return id++;
-            }
-        };
-
-        org.jgrapht.Graph<Integer, DefaultEdge> g=new DefaultUndirectedGraph<>(vSupplier, SupplierUtil.createDefaultEdgeSupplier(), false);
-
-        org.jgrapht.io.CSVImporter csvImporter = new CSVImporter(vertexProvider,edgeProvider, CSVFormat.EDGE_LIST,' ');
-        try
-        {
-            Reader r = new FileReader("social-graphs/"+this.networkFilename);
-            csvImporter.importGraph(g,r);
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
-        return g;
-        */
         org.jgrapht.Graph<Integer, DefaultEdge> g= new DefaultUndirectedGraph<Integer,DefaultEdge>(DefaultEdge.class);
         try {
             FileReader fr = new FileReader("social-graphs/" + this.networkFilename);
