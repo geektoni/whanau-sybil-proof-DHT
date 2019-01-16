@@ -3,12 +3,20 @@ package it.unitn.disi.ds2.whanau.controls;
 import org.jgrapht.generate.GnpRandomGraphGenerator;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultUndirectedGraph;
+import org.jgrapht.io.*;
 import org.jgrapht.util.SupplierUtil;
 import peersim.config.Configuration;
 import peersim.core.Network;
 import peersim.dynamics.WireGraph;
 import peersim.graph.Graph;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -29,6 +37,8 @@ public class WhanauWireNetwork extends WireGraph {
         super(prefix);
         this.pid = Configuration.getPid(prefix + "." + prot);
         p = Configuration.getDouble(prefix + ".probability",0.1);
+        this.networkFilename = Configuration.getString(prefix+"."+socialNetworkFilename,"");
+
         graphGenerator = new GnpRandomGraphGenerator<Integer, DefaultEdge>(Network.size(), p, 42);
     }
 
@@ -37,9 +47,16 @@ public class WhanauWireNetwork extends WireGraph {
      * @param graph An instance of {@link peersim.graph.Graph}.
      */
     public void wire(Graph graph) {
+        org.jgrapht.Graph<Integer, DefaultEdge> g;
+        if(this.networkFilename.equals(""))
+        {
+            g = generateTopology();
+        }
+        else
+        {
+            g = readTopologyFromFile();
+        }
 
-        // TODO: It must be possible to do it from social network file.
-        org.jgrapht.Graph<Integer, DefaultEdge> g = generateTopology();
 
         // Loop over all nodes and add the links between them.
         // This way we will build the Peersim topology.
@@ -75,16 +92,100 @@ public class WhanauWireNetwork extends WireGraph {
         return g;
     }
 
+    /**
+     * Generates the graph starting from the specified file
+     * This allows to build the network in order to replicate real social networks
+     * @return the loaded graph
+     */
+    private org.jgrapht.Graph<Integer, DefaultEdge> readTopologyFromFile()
+    {
+        /*
+        VertexProvider<Integer> vertexProvider = new VertexProvider<Integer>() {
+            @Override
+            public Integer buildVertex(String s, Map<String, Attribute> map) {
+                return Integer.parseInt(s);
+            }
+        };
+
+        EdgeProvider<Integer,DefaultEdge> edgeProvider = new EdgeProvider() {
+            @Override
+            public Object buildEdge(Object o, Object v1, String s, Map map) {
+                return new DefaultEdge();
+            }
+        };
+
+        Supplier<Integer> vSupplier = new Supplier<Integer>()
+        {
+            private int id = 0;
+
+            @Override
+            public Integer get()
+            {
+                return id++;
+            }
+        };
+
+        org.jgrapht.Graph<Integer, DefaultEdge> g=new DefaultUndirectedGraph<>(vSupplier, SupplierUtil.createDefaultEdgeSupplier(), false);
+
+        org.jgrapht.io.CSVImporter csvImporter = new CSVImporter(vertexProvider,edgeProvider, CSVFormat.EDGE_LIST,' ');
+        try
+        {
+            Reader r = new FileReader("social-graphs/"+this.networkFilename);
+            csvImporter.importGraph(g,r);
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        return g;
+        */
+        org.jgrapht.Graph<Integer, DefaultEdge> g= new DefaultUndirectedGraph<Integer,DefaultEdge>(DefaultEdge.class);
+        try {
+            FileReader fr = new FileReader("social-graphs/" + this.networkFilename);
+            Scanner scanner = new Scanner(new BufferedReader(fr));
+            long nodeNumber = scanner.nextLong();
+            long edgeNumber = scanner.nextInt();
+            HashSet<Integer> nodes = new HashSet<>();
+            for (int i = 0; i < edgeNumber; i++) {
+                int src,dst;
+                src = scanner.nextInt();
+                dst = scanner.nextInt();
+                if(!nodes.contains(src))
+                {
+                    g.addVertex(src);
+                    nodes.add(src);
+                }
+                if(!nodes.contains(dst))
+                {
+                    g.addVertex(dst);
+                    nodes.add(dst);
+                }
+                g.addEdge(src,dst);
+            }
+            fr.close();
+        } catch (Exception e ) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+
+        return g;
+    }
+
+
     /* ID of the linkable protocol which will be present in each node */
     private int pid;
 
     /** Probability of adding an edge between two nodes */
     private double p;
 
+    /* File for building the network topology */
+    private String networkFilename;
+
     /** Graph generator */
     private GnpRandomGraphGenerator<Integer, DefaultEdge> graphGenerator;
 
     /* Configuration parameter identifier for the linkable protocol*/
     static private String prot = "protocol";
+    static private String socialNetworkFilename = "social-network";
 
 }
