@@ -3,7 +3,6 @@ package it.unitn.disi.ds2.whanau.utils;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class LookupResult {
@@ -27,6 +26,7 @@ public class LookupResult {
                 String outputLine = r.value == null ? "fail\n" : r.tries+"\n";
                 writer.write(outputLine);
             }
+            writer.close();
         } catch (IOException e) {
             System.err.println("Impossible to write on file '"+filename+"'");
         }
