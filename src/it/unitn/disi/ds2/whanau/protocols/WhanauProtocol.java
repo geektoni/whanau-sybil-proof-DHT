@@ -22,7 +22,6 @@ public class WhanauProtocol implements Protocol {
         this.rng = new Random(Configuration.getInt("random.seed", 1));
         this.stored_records = new TreeMap<>();
         this.sybil = false;
-        //System.out.println(this.isSybil());
     }
 
     /**
