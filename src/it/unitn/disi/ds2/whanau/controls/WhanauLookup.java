@@ -2,6 +2,7 @@ package it.unitn.disi.ds2.whanau.controls;
 
 import it.unitn.disi.ds2.whanau.protocols.WhanauProtocol;
 import it.unitn.disi.ds2.whanau.utils.Pair;
+import it.unitn.disi.ds2.whanau.utils.LookupResult;
 import peersim.config.Configuration;
 import peersim.core.Network;
 import peersim.core.Node;
@@ -15,6 +16,7 @@ public class WhanauLookup extends WhanauSetup {
     public WhanauLookup(String prefix) {
         super(prefix);
         key = Configuration.getInt(prefix+"."+target_key,1);
+        execution_cycles = Configuration.getInt(prefix + "." + exec_cycles,1);
     }
 
     /**
@@ -24,19 +26,25 @@ public class WhanauLookup extends WhanauSetup {
      */
     public boolean execute()
     {
-        // Get a random node not sybil
-        Node source = this.getRandomNodeNotSybil(this.t_node);
+        ArrayList<LookupResult> collectedResults = new ArrayList<>();
+        for (int i = 0; i < execution_cycles; i++) {
+            // Get a random node not sybil
+            Node source = this.getRandomNodeNotSybil(this.t_node);
 
-        // Get the target node and get its key
-        Node target = Network.get(this.t_node);
-        WhanauProtocol target_casted = (WhanauProtocol) target.getProtocol(this.pid);
-        key = target_casted.getIdOfLayer(0);
+            // Get the target node and get its key
+            Node target = Network.get(this.t_node);
+            WhanauProtocol target_casted = (WhanauProtocol) target.getProtocol(this.pid);
+            key = target_casted.getIdOfLayer(0);
 
-        // Lookup
-        String value = this.lookup(source, key);
+            // Lookup
+            LookupResult result = this.lookup(source,key);
+            collectedResults.add(result);
 
-        System.out.println(String.valueOf(target_casted.getStored_records().get(key)));
-        System.out.println(String.format("Find element: %s", value));
+            System.out.println(String.valueOf(target_casted.getStored_records().get(key)));
+            System.out.println(String.format("Find element: %s", result.value));
+        }
+        String filename = "stats/lookup_n"+this.execution_cycles+".txt";
+        LookupResult.writeOnFile(collectedResults,filename);
 
         return false;
     }
@@ -53,19 +61,19 @@ public class WhanauLookup extends WhanauSetup {
         return result;
     }
 
-    public String lookup(Node u, int key)
+    public LookupResult lookup(Node u,int key)
     {
+        int triesNumber = 15, counter = 0;
         String value = null;
         Node v = u;
-        int retry = 15;
-        do {
-            value =  _try(v, key);
-            v = this.randomWalk(u, this.w);
-            retry--;
-        } while (value == null && retry > 0);
-        return value;
+        do
+        {
+            value = _try(v,key);
+            v = this.randomWalk(u,this.w);
+            counter++;
+        } while(value == null && counter < triesNumber);
+        return new LookupResult(value,counter);
     }
-
 
     public String _try(Node source, int key)
     {
@@ -137,7 +145,9 @@ public class WhanauLookup extends WhanauSetup {
 
     // Key we want to find
     private Integer key;
+    private int execution_cycles;
 
     static private String target_key = "target_key";
+    static private String exec_cycles = "execution_cycles";
 }
 
