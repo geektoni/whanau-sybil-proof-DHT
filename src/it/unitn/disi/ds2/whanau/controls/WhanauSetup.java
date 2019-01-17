@@ -11,6 +11,7 @@ import peersim.core.Node;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 /**
  * Control class which implements the logic of the setup()
@@ -54,6 +55,8 @@ public class WhanauSetup implements Control {
             node.addToStoredRecords(value);
         }
 
+        this.target_key = ((WhanauProtocol) Network.get(this.t_node).getProtocol(this.pid)).getStored_records().firstKey();
+
         int totalEdges = 0;
 
         // Initialize the internal tables of each node
@@ -64,14 +67,16 @@ public class WhanauSetup implements Control {
             totalEdges += ((IdleProtocol)(Network.get(i).getProtocol(this.lid))).degree();
         }
 
+        // Set sybil nodes
         int attackEdgesToSet = (int)(totalEdges * this.ratioAttackEdges);
         int counter = 0,index = 0;
         int networkSize = Network.size();
         ArrayList<Integer> ids = new ArrayList<>(networkSize);
         for (int i = 0; i < networkSize; i++) {
-            ids.set(i,i);
+            ids.add(i);
         }
-        Collections.shuffle(ids);
+        ids.remove(this.t_node);
+        Collections.shuffle(ids, new Random(Configuration.getInt("random.seed", 1)));
         Node currentNode;
         WhanauProtocol whanauNode;
         while(counter<attackEdgesToSet)
@@ -82,6 +87,7 @@ public class WhanauSetup implements Control {
             counter += ((IdleProtocol)(currentNode.getProtocol(this.lid))).degree();
             index++;
         }
+        this.total_sybil_nodes = index;
 
         // Set up the db table
         for (int i=0; i< Network.size(); i++)
@@ -184,7 +190,17 @@ public class WhanauSetup implements Control {
         Integer id = -1;
         if (layer == 0)
         {
-            id= n.randomRecord().first;
+            if (n.isSybil())
+            {
+                // Clever way to choose a Sybil finger
+                id = this.target_key + (rng.nextInt(this.total_sybil_nodes))-total_sybil_nodes/2;
+                if (id == this.target_key)
+                {
+                    id = rng.nextInt(total_sybil_nodes/2)+1;
+                }
+            } else {
+                id= n.randomRecord().first;
+            }
         } else {
             id= n.randomRecordFingers(layer-1).first;
         }
@@ -260,4 +276,6 @@ public class WhanauSetup implements Control {
     protected double ratioAttackEdges;
 
     protected int t_node;
+    protected int target_key;
+    protected int total_sybil_nodes;
 }

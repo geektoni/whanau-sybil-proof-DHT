@@ -24,14 +24,15 @@ public class WhanauLookup extends WhanauSetup {
      */
     public boolean execute()
     {
-        Node source = Network.get(0);
+        // Get a random node not sybil
+        Node source = this.getRandomNodeNotSybil(this.t_node);
 
-        Node target = Network.get(5);
-
+        // Get the target node and get its key
+        Node target = Network.get(this.t_node);
         WhanauProtocol target_casted = (WhanauProtocol) target.getProtocol(this.pid);
-
         key = target_casted.getIdOfLayer(0);
 
+        // Lookup
         String value = this.lookup(source, key);
 
         System.out.println(String.valueOf(target_casted.getStored_records().get(key)));
@@ -40,11 +41,23 @@ public class WhanauLookup extends WhanauSetup {
         return false;
     }
 
+    public Node getRandomNodeNotSybil(int target_node)
+    {
+        int random_guy_not_sybil;
+        Node result;
+        do {
+            random_guy_not_sybil = rng.nextInt(Network.size());
+            result = Network.get(random_guy_not_sybil);
+        } while (((WhanauProtocol)result.getProtocol(this.pid)).isSybil()
+                || random_guy_not_sybil == target_node);
+        return result;
+    }
+
     public String lookup(Node u, int key)
     {
         String value = null;
         Node v = u;
-        int retry = 200;
+        int retry = 15;
         do {
             value =  _try(v, key);
             v = this.randomWalk(u, this.w);
