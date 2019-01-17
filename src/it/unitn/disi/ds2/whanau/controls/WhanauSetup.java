@@ -121,7 +121,8 @@ public class WhanauSetup implements Control {
             // Add the found values to the successor table
             for (Pair<Integer, String> p :  casted_node.successorsSample(current_key))
             {
-               all_elements.add(p);
+                if (!all_elements.contains(p))
+                    all_elements.add(p);
             }
         }
         source.addToSuccessors(all_elements, layer);

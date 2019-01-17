@@ -26,6 +26,8 @@ public class WhanauObserver implements Control {
         System.out.println("-> Ids of Node: "+String.valueOf(node.getIds()));
         System.out.println("-> Database: "+String.valueOf(node.getDb()));
         System.out.println("-> Successors:"+String.valueOf(node.getSucc()));
+        System.out.println("-> Fingers:"+String.valueOf(node.getFingers()));
+
 
         return false;
     }

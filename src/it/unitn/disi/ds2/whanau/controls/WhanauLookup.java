@@ -32,7 +32,6 @@ public class WhanauLookup extends WhanauSetup {
 
         key = target_casted.getIdOfLayer(0);
 
-        //Logger.getAnonymousLogger().info("Reached execute().");
         String value = this.lookup(source, key);
 
         System.out.println(String.valueOf(target_casted.getStored_records().get(key)));
@@ -43,11 +42,9 @@ public class WhanauLookup extends WhanauSetup {
 
     public String lookup(Node u, int key)
     {
-        //Logger.getAnonymousLogger().info("Reached loookup().");
-
         String value = null;
         Node v = u;
-        int retry = 100;
+        int retry = 200;
         do {
             value =  _try(v, key);
             v = this.randomWalk(u, this.w);
@@ -59,12 +56,8 @@ public class WhanauLookup extends WhanauSetup {
 
     public String _try(Node source, int key)
     {
-        Logger.getAnonymousLogger().info("Reached try().");
-
         WhanauProtocol u = (WhanauProtocol) source.getProtocol(this.pid);
         ArrayList<Pair<Integer, Node>> fingers = u.getFingersForLayer(0);
-        Logger.getAnonymousLogger().info(" [*] Fingers 0: "+String.valueOf(fingers));
-        assert (fingers.size() == this.f);
         int j = this.f-1;
         String value = null;
         do {
@@ -79,8 +72,6 @@ public class WhanauLookup extends WhanauSetup {
 
     private Pair<Node, Integer> chooseFinger(Node source, int id_layer_zero, Integer key)
     {
-        Logger.getAnonymousLogger().info("Reached chooseFinger().");
-
         ArrayList<ArrayList<Pair<Integer, Node>>> F = new ArrayList<>(Collections.nCopies(this.l, new ArrayList<>()));
         WhanauProtocol u = (WhanauProtocol) source.getProtocol(this.pid);
         for (int i = 0; i < this.l; i++) {
@@ -90,7 +81,6 @@ public class WhanauLookup extends WhanauSetup {
                 }
             }
         }
-        //Logger.getAnonymousLogger().info(String.valueOf(F));
 
         // If F is completely empty then try again somewhere else
         int sum_elements=0;
@@ -117,10 +107,8 @@ public class WhanauLookup extends WhanauSetup {
 
     private String query(Node u, int layer, int key)
     {
-        Logger.getAnonymousLogger().info("Reached query().");
-
         WhanauProtocol prot = (WhanauProtocol) u.getProtocol(this.pid);
-        
+
         String value = prot.getValueOfKey(key, layer);
 
         return value;

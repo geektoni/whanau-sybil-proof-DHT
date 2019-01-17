@@ -3,6 +3,7 @@ package it.unitn.disi.ds2.whanau.utils;
 import peersim.core.Node;
 
 import java.util.Comparator;
+import java.util.Objects;
 
 /**
  * Sample class to store a pair of values.
@@ -18,7 +19,23 @@ public class Pair<X, Y> {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Pair<?, ?> pair = (Pair<?, ?>) o;
+        return Objects.equals(first, pair.first) &&
+                Objects.equals(second, pair.second);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(first, second);
+    }
+
+    @Override
     public String toString() {
+        if (this.second instanceof Node)
+            return String.format("<%s, Node>", this.first);
         return String.format("<%s, %s>", this.first, this.second);
     }
 
