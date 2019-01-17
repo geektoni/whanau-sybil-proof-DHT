@@ -10,6 +10,7 @@ import peersim.core.Network;
 import peersim.core.Node;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Control class which implements the logic of the setup()
@@ -63,6 +64,25 @@ public class WhanauSetup implements Control {
             totalEdges += ((IdleProtocol)(Network.get(i).getProtocol(this.lid))).degree();
         }
 
+        int attackEdgesToSet = (int)(totalEdges * this.ratioAttackEdges);
+        int counter = 0,index = 0;
+        int networkSize = Network.size();
+        ArrayList<Integer> ids = new ArrayList<>(networkSize);
+        for (int i = 0; i < networkSize; i++) {
+            ids.set(i,i);
+        }
+        Collections.shuffle(ids);
+        Node currentNode;
+        WhanauProtocol whanauNode;
+        while(counter<attackEdgesToSet)
+        {
+            currentNode = Network.get(ids.get(index));
+            whanauNode = (WhanauProtocol)currentNode.getProtocol(pid);
+            whanauNode.setSybil(true);
+            counter += ((IdleProtocol)(currentNode.getProtocol(this.lid))).degree();
+            index++;
+        }
+
         // Set up the db table
         for (int i=0; i< Network.size(); i++)
         {
@@ -103,22 +123,6 @@ public class WhanauSetup implements Control {
             {
                 list.sort(new Pair.SuccComparator());
             }
-        }
-
-        int attackEdgesToSet = (int)(totalEdges * this.ratioAttackEdges);
-        int counter = 0;
-        int networkSize = Network.size();
-        Node node;
-        WhanauProtocol whanauNode;
-        while(counter<attackEdgesToSet)
-        {
-            do {
-                int randomIndex = rng.nextInt(networkSize);
-                node = Network.get(randomIndex);
-                whanauNode = ((WhanauProtocol)node.getProtocol(this.pid));
-            } while(whanauNode.isSybil());
-            whanauNode.setSybil(true);
-            counter += ((IdleProtocol)(node.getProtocol(this.lid))).degree();
         }
 
         return true;
