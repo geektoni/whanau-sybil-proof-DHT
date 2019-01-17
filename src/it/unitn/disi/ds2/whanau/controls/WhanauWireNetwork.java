@@ -1,5 +1,6 @@
 package it.unitn.disi.ds2.whanau.controls;
 
+import org.jgrapht.generate.BarabasiAlbertGraphGenerator;
 import org.jgrapht.generate.WattsStrogatzGraphGenerator;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultUndirectedGraph;
@@ -35,8 +36,11 @@ public class WhanauWireNetwork extends WireGraph {
         p = Configuration.getDouble(prefix + ".probability",0.1);
         this.networkFilename = Configuration.getString(prefix+"."+socialNetworkFilename,"");
 
-        graphGenerator = new WattsStrogatzGraphGenerator<Integer, DefaultEdge>(Network.size(),
-                Configuration.getInt(prefix+"."+k_neighbours, 1), p, Configuration.getInt("random.seed", 1));
+        //graphGenerator = new WattsStrogatzGraphGenerator<Integer, DefaultEdge>(Network.size(),
+        //        Configuration.getInt(prefix+"."+k_neighbours, 1), p, Configuration.getInt("random.seed", 1));
+        // start from a clique of ten nodes, add nodes (with 3 edges each) up to Network.size()
+        // the 3 is the mean of the avg degree of Youtube and DBLP
+        graphGenerator = new BarabasiAlbertGraphGenerator<Integer, DefaultEdge>(10,3,Network.size(),Configuration.getInt("random.seed", 1));
     }
 
     /**
@@ -140,7 +144,8 @@ public class WhanauWireNetwork extends WireGraph {
     private String networkFilename;
 
     /** Graph generator */
-    private WattsStrogatzGraphGenerator<Integer, DefaultEdge> graphGenerator;
+    //private WattsStrogatzGraphGenerator<Integer, DefaultEdge> graphGenerator;
+    private BarabasiAlbertGraphGenerator<Integer, DefaultEdge> graphGenerator;
 
     /* Configuration parameter identifier for the linkable protocol*/
     static private String prot = "protocol";
