@@ -2,6 +2,7 @@ package it.unitn.disi.ds2.whanau.controls;
 
 import it.unitn.disi.ds2.whanau.protocols.WhanauProtocol;
 import it.unitn.disi.ds2.whanau.utils.Pair;
+import it.unitn.disi.ds2.whanau.utils.RandomSingleton;
 import peersim.config.Configuration;
 import peersim.core.Control;
 import peersim.core.IdleProtocol;
@@ -9,8 +10,6 @@ import peersim.core.Network;
 import peersim.core.Node;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Random;
 
 /**
  * Control class which implements the logic of the setup()
@@ -32,7 +31,7 @@ public class WhanauSetup implements Control {
         this.f = Configuration.getInt(prefix + "." + max_fingers, 1);
         this.s = Configuration.getInt(prefix + "." + max_successors, 1);
 
-        this.rng = new Random();
+        this.rng = RandomSingleton.getInstance(Configuration.getInt("random.seed", 1));
 
     }
 
@@ -222,7 +221,7 @@ public class WhanauSetup implements Control {
     protected int pid;
     protected int lid;
 
-    protected Random rng;
+    protected RandomSingleton rng;
 
     protected int f;
     protected int s;

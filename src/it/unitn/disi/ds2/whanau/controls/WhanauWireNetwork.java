@@ -35,7 +35,7 @@ public class WhanauWireNetwork extends WireGraph {
         p = Configuration.getDouble(prefix + ".probability",0.1);
         this.networkFilename = Configuration.getString(prefix+"."+socialNetworkFilename,"");
 
-        graphGenerator = new WattsStrogatzGraphGenerator<Integer, DefaultEdge>(Network.size(), 30, p);
+        graphGenerator = new WattsStrogatzGraphGenerator<Integer, DefaultEdge>(Network.size(), 30, p, Configuration.getInt("random.seed", 1));
     }
 
     /**
