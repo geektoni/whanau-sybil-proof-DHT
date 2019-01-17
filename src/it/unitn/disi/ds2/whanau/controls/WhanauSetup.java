@@ -32,6 +32,8 @@ public class WhanauSetup implements Control {
         this.s = Configuration.getInt(prefix + "." + max_successors, 1);
         this.ratioAttackEdges = Configuration.getDouble(prefix + "." + ratio_attack_edges,(double)Network.size()/this.w);
 
+        this.t_node = Configuration.getInt(prefix+"."+target_node, 10);
+
         this.rng = RandomSingleton.getInstance(Configuration.getInt("random.seed", 1));
 
     }
@@ -239,6 +241,8 @@ public class WhanauSetup implements Control {
     static private String mixing_time = "mixing_time";
     static private String ratio_attack_edges = "ratio_attack_edges";
 
+    static private String target_node = "target_node";
+
     protected int pid;
     protected int lid;
 
@@ -250,4 +254,6 @@ public class WhanauSetup implements Control {
     protected int l;
     protected int w;
     protected double ratioAttackEdges;
+
+    protected int t_node;
 }
