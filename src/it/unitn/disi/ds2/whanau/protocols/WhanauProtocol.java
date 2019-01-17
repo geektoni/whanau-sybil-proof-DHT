@@ -20,6 +20,8 @@ public class WhanauProtocol implements Protocol {
         this.prefix = prefix;
         this.rng = new Random();
         this.stored_records = new TreeMap<>();
+        this.sybil = false;
+        //System.out.println(this.isSybil());
     }
 
     /**
@@ -106,6 +108,22 @@ public class WhanauProtocol implements Protocol {
     }
 
     /**
+     * Returns if the node is sybil
+     * @return the boolean value
+     */
+    public boolean isSybil() {
+        return sybil;
+    }
+
+    /**
+     * Sets the node's behaviour (sybil, not sybil)
+     * @param sybil the boolean value
+     */
+    public void setSybil(boolean sybil) {
+        this.sybil = sybil;
+    }
+
+    /**
      * Get the id of a layer.
      * @param layer the given layer.
      * @return the ID of that layer
@@ -157,11 +175,11 @@ public class WhanauProtocol implements Protocol {
     public String getValueOfKey(Integer key, int layer)
     {
         assert (layer >=0 && layer < succ.size());
-
-        for (Pair<Integer, String> successor : succ.get(layer))
-        {
-            if (successor.first.equals(key))
-                return successor.second;
+        if(!this.sybil) {
+            for (Pair<Integer, String> successor : succ.get(layer)) {
+                if (successor.first.equals(key))
+                    return successor.second;
+            }
         }
         return null;
     }
@@ -235,6 +253,7 @@ public class WhanauProtocol implements Protocol {
     private String prefix;
 
     private TreeMap<Integer, String> stored_records;
+    private boolean sybil;
 
     private static int T = 1;
 

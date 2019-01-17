@@ -31,6 +31,7 @@ public class WhanauSetup implements Control {
         this.d = Configuration.getInt(prefix + "." + database_size, 1);
         this.f = Configuration.getInt(prefix + "." + max_fingers, 1);
         this.s = Configuration.getInt(prefix + "." + max_successors, 1);
+        this.ratioAttackEdges = Configuration.getDouble(prefix + "." + ratio_attack_edges,(double)Network.size()/this.w);
 
         this.rng = new Random();
 
@@ -51,11 +52,14 @@ public class WhanauSetup implements Control {
             node.addToStoredRecords(value);
         }
 
+        int totalEdges = 0;
+
         // Initialize the internal tables of each node
         // (ids, fingers, successors, db).
         for (int i = 0; i < Network.size(); i++) {
             WhanauProtocol node = (WhanauProtocol) Network.get(i).getProtocol(this.pid);
             node.setUpInternalTables(this.f, this.s, this.d, this.l, this.w);
+            totalEdges += ((IdleProtocol)(Network.get(i).getProtocol(this.lid))).degree();
         }
 
         // Set up the db table
@@ -98,6 +102,22 @@ public class WhanauSetup implements Control {
             {
                 list.sort(new Pair.SuccComparator());
             }
+        }
+
+        int attackEdgesToSet = (int)(totalEdges * this.ratioAttackEdges);
+        int counter = 0;
+        int networkSize = Network.size();
+        Node node;
+        WhanauProtocol whanauNode;
+        while(counter<attackEdgesToSet)
+        {
+            do {
+                int randomIndex = rng.nextInt(networkSize);
+                node = Network.get(randomIndex);
+                whanauNode = ((WhanauProtocol)node.getProtocol(this.pid));
+            } while(whanauNode.isSybil());
+            whanauNode.setSybil(true);
+            counter += ((IdleProtocol)(node.getProtocol(this.lid))).degree();
         }
 
         return true;
@@ -218,6 +238,7 @@ public class WhanauSetup implements Control {
     static private String max_successors = "max_successors";
     static private String max_fingers = "max_fingers";
     static private String mixing_time = "mixing_time";
+    static private String ratio_attack_edges = "ratio_attack_edges";
 
     protected int pid;
     protected int lid;
@@ -229,4 +250,5 @@ public class WhanauSetup implements Control {
     protected int d;
     protected int l;
     protected int w;
+    protected double ratioAttackEdges;
 }
