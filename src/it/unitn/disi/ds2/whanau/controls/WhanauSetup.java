@@ -33,6 +33,7 @@ public class WhanauSetup implements Control {
         this.f = Configuration.getInt(prefix + "." + max_fingers, 1);
         this.s = Configuration.getInt(prefix + "." + max_successors, 1);
         this.ratioAttackEdges = Configuration.getDouble(prefix + "." + ratio_attack_edges,(double)Network.size()/this.w);
+        this.cluster_attack = Configuration.getBoolean(prefix + "." + do_cluster_attack,false);
 
         this.t_node = Configuration.getInt(prefix+"."+target_node, 10);
 
@@ -190,7 +191,7 @@ public class WhanauSetup implements Control {
         Integer id = -1;
         if (layer == 0)
         {
-            if (n.isSybil())
+            if (n.isSybil() && cluster_attack)
             {
                 // Clever way to choose a Sybil finger
                 id = this.target_key + (rng.nextInt(this.total_sybil_nodes))-total_sybil_nodes/2;
@@ -260,7 +261,7 @@ public class WhanauSetup implements Control {
     static private String max_fingers = "max_fingers";
     static private String mixing_time = "mixing_time";
     static private String ratio_attack_edges = "ratio_attack_edges";
-
+    static private String do_cluster_attack = "cluster_attack";
     static private String target_node = "target_node";
 
     protected int pid;
@@ -278,4 +279,5 @@ public class WhanauSetup implements Control {
     protected int t_node;
     protected int target_key;
     protected int total_sybil_nodes;
+    protected boolean cluster_attack;
 }
