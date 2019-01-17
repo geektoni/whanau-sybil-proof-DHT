@@ -1,6 +1,7 @@
 package it.unitn.disi.ds2.whanau.protocols;
 
 import it.unitn.disi.ds2.whanau.utils.Pair;
+import peersim.config.Configuration;
 import peersim.core.*;
 
 import java.util.*;
@@ -18,7 +19,7 @@ public class WhanauProtocol implements Protocol {
      */
     public WhanauProtocol(String prefix) {
         this.prefix = prefix;
-        this.rng = new Random();
+        this.rng = new Random(Configuration.getInt("random.seed", 1));
         this.stored_records = new TreeMap<>();
         this.sybil = false;
         //System.out.println(this.isSybil());
