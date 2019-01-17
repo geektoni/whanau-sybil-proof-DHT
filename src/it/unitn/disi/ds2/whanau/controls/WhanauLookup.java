@@ -61,6 +61,12 @@ public class WhanauLookup extends WhanauSetup {
         int j = this.f-1;
         String value = null;
         do {
+            if (fingers.get(j).first >= key)
+            {
+                j--;
+                continue;
+            }
+
             Pair<Node, Integer> choose_fing = this.chooseFinger(source, fingers.get(j).first, key);
             if (choose_fing.first == null || choose_fing.second == null)
                 return null;
@@ -108,6 +114,8 @@ public class WhanauLookup extends WhanauSetup {
     private String query(Node u, int layer, int key)
     {
         WhanauProtocol prot = (WhanauProtocol) u.getProtocol(this.pid);
+
+        //System.out.println("Trying node "+String.valueOf(prot.getIdOfLayer(0))+" for key "+key);
 
         String value = prot.getValueOfKey(key, layer);
 
