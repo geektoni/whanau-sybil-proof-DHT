@@ -63,24 +63,28 @@ public class WhanauLookup extends WhanauSetup {
 
     public LookupResult lookup(Node u,int key)
     {
-        int triesNumber = 15, counter = 0;
+        int triesNumber = 15, counter = 0, total_messages=0;
+        Pair<String, Integer> res = null;
         String value = null;
         Node v = u;
         do
         {
-            value = _try(v,key);
+            res = _try(v,key);
+            total_messages += res.second;
+            value = res.first;
             v = this.randomWalk(u,this.w);
             counter++;
         } while(value == null && counter < triesNumber);
-        return new LookupResult(value,counter);
+        return new LookupResult(value,counter+total_messages);
     }
 
-    public String _try(Node source, int key)
+    public Pair<String, Integer> _try(Node source, int key)
     {
         WhanauProtocol u = (WhanauProtocol) source.getProtocol(this.pid);
         ArrayList<Pair<Integer, Node>> fingers = u.getFingersForLayer(0);
         int j = this.f-1;
         String value = null;
+        int query_count =0;
         do {
             if (fingers.get(j).first >= key)
             {
@@ -92,9 +96,10 @@ public class WhanauLookup extends WhanauSetup {
             if (choose_fing.first == null || choose_fing.second == null)
                 return null;
             value = this.query(choose_fing.first, choose_fing.second, key);
+            query_count++;
             j = j-1;
         } while (value == null && j>=0);
-        return value;
+        return new Pair<>(value, query_count);
     }
 
     private Pair<Node, Integer> chooseFinger(Node source, int id_layer_zero, Integer key)

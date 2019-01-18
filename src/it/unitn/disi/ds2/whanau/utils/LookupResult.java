@@ -3,7 +3,6 @@ package it.unitn.disi.ds2.whanau.utils;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class LookupResult {
