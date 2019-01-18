@@ -92,3 +92,4 @@ fabric.properties
 !lib/*.jar
 
 target/
+stats/
