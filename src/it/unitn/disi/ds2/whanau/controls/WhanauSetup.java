@@ -3,11 +3,9 @@ package it.unitn.disi.ds2.whanau.controls;
 import it.unitn.disi.ds2.whanau.protocols.WhanauProtocol;
 import it.unitn.disi.ds2.whanau.utils.Pair;
 import it.unitn.disi.ds2.whanau.utils.RandomSingleton;
+import peersim.cdsim.CDSimulator;
 import peersim.config.Configuration;
-import peersim.core.Control;
-import peersim.core.IdleProtocol;
-import peersim.core.Network;
-import peersim.core.Node;
+import peersim.core.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +32,6 @@ public class WhanauSetup implements Control {
         this.s = Configuration.getInt(prefix + "." + max_successors, 1);
         this.ratioAttackEdges = Configuration.getDouble(prefix + "." + ratio_attack_edges,(double)Network.size()/this.w);
         this.cluster_attack = Configuration.getBoolean(prefix + "." + do_cluster_attack,false);
-
         this.t_node = Configuration.getInt(prefix+"."+target_node, 10);
 
         this.rng = RandomSingleton.getInstance(Configuration.getInt("random.seed", 1));

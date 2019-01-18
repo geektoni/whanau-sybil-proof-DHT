@@ -27,6 +27,7 @@ public class LookupResult {
                 String outputLine = r.value == null ? "fail\n" : r.tries+"\n";
                 writer.write(outputLine);
             }
+            writer.close();
         } catch (IOException e) {
             System.err.println("Impossible to write on file '"+filename+"'");
         }
