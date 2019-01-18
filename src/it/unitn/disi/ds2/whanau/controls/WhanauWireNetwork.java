@@ -1,7 +1,6 @@
 package it.unitn.disi.ds2.whanau.controls;
 
 import org.jgrapht.generate.BarabasiAlbertGraphGenerator;
-import org.jgrapht.generate.WattsStrogatzGraphGenerator;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultUndirectedGraph;
 import org.jgrapht.util.SupplierUtil;
@@ -32,15 +31,14 @@ public class WhanauWireNetwork extends WireGraph {
     public WhanauWireNetwork(String prefix)
     {
         super(prefix);
-        this.pid = Configuration.getPid(prefix + "." + prot);
-        p = Configuration.getDouble(prefix + ".probability",0.1);
         this.networkFilename = Configuration.getString(prefix+"."+socialNetworkFilename,"");
 
-        //graphGenerator = new WattsStrogatzGraphGenerator<Integer, DefaultEdge>(Network.size(),
-        //        Configuration.getInt(prefix+"."+k_neighbours, 1), p, Configuration.getInt("random.seed", 1));
-        // start from a clique of ten nodes, add nodes (with 3 edges each) up to Network.size()
         // the 3 is the mean of the avg degree of Youtube and DBLP
-        graphGenerator = new BarabasiAlbertGraphGenerator<Integer, DefaultEdge>(10,3,Network.size(),Configuration.getInt("random.seed", 1));
+        this.degree_new_node= Configuration.getInt(prefix+"."+degree_node, 3);
+
+        // start from a clique of ten nodes, add nodes (with 3 edges each) up to Network.size()
+        graphGenerator = new BarabasiAlbertGraphGenerator<Integer, DefaultEdge>(10,
+                degree_new_node, Network.size(),Configuration.getInt("random.seed", 1));
     }
 
     /**
@@ -133,23 +131,17 @@ public class WhanauWireNetwork extends WireGraph {
         return g;
     }
 
-
-    /* ID of the linkable protocol which will be present in each node */
-    private int pid;
-
-    /** Probability of adding an edge between two nodes */
-    private double p;
+    /* Number of edges of each new node added during the network growth */
+    private int degree_new_node;
 
     /* File for building the network topology */
     private String networkFilename;
 
     /** Graph generator */
-    //private WattsStrogatzGraphGenerator<Integer, DefaultEdge> graphGenerator;
     private BarabasiAlbertGraphGenerator<Integer, DefaultEdge> graphGenerator;
 
     /* Configuration parameter identifier for the linkable protocol*/
-    static private String prot = "protocol";
-    static private String socialNetworkFilename = "social-network";
-    static private String k_neighbours = "k_neighbours";
+    static private String socialNetworkFilename = "social_network";
+    static private String degree_node = "degree_new_node";
 
 }
