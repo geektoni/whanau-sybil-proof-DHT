@@ -1,6 +1,7 @@
 package it.unitn.disi.ds2.whanau.controls;
 
 import it.unitn.disi.ds2.whanau.protocols.WhanauProtocol;
+import it.unitn.disi.ds2.whanau.utils.LoggerSingleton;
 import it.unitn.disi.ds2.whanau.utils.Pair;
 import it.unitn.disi.ds2.whanau.utils.LookupResult;
 import peersim.config.Configuration;
@@ -9,39 +10,48 @@ import peersim.core.Node;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.logging.Logger;
 
 public class WhanauLookup extends WhanauSetup {
 
     public WhanauLookup(String prefix) {
         super(prefix);
-        key = Configuration.getInt(prefix+"."+target_key,1);
         execution_cycles = Configuration.getInt(prefix + "." + exec_cycles,1);
+
+        this.logger = LoggerSingleton.getInstance(this.getClass().getSimpleName(),
+                Configuration.getBoolean("enable_logging",false));
     }
 
     /**
      * Execute the lookup action from a given random node
-     * which is not sybil.
+     * which is not sybil. The action is done several time to collect
+     * an estimate about how many messages we send in order to get the
+     * key associated value.
      * @return
      */
     public boolean execute()
     {
         ArrayList<LookupResult> collectedResults = new ArrayList<>();
         for (int i = 0; i < execution_cycles; i++) {
+
             // Get a random node not sybil
             Node source = this.getRandomNodeNotSybil(this.t_node);
+
+            WhanauProtocol source_casted = (WhanauProtocol) source.getProtocol(this.pid);
 
             // Get the target node and get its key
             Node target = Network.get(this.t_node);
             WhanauProtocol target_casted = (WhanauProtocol) target.getProtocol(this.pid);
             key = target_casted.getIdOfLayer(0);
 
+            logger.log("Cycle "+(i+1)+"/"+execution_cycles+": Searching for element ("+key+", "+
+                    String.valueOf(target_casted.getStored_records().get(key))+") starting " +
+                    "from node with ID "+source_casted.getIdOfLayer(0));
+
             // Lookup
             LookupResult result = this.lookup(source,key);
             collectedResults.add(result);
 
-            System.out.println(String.valueOf(target_casted.getStored_records().get(key)));
-            System.out.println(String.format("Find element: %s", result.value));
+            logger.log("Cycle "+(i+1)+"/"+execution_cycles+": The element found was "+result.value);
         }
         String filename = "stats/lookup_n"+this.execution_cycles+".txt";
         LookupResult.writeOnFile(collectedResults,filename);
@@ -49,6 +59,12 @@ public class WhanauLookup extends WhanauSetup {
         return false;
     }
 
+    /**
+     * Get a random node which has to be not sybil.
+     * It also avoid to get a node with a specific id.
+     * @param target_node the node we want to avoid to select.
+     * @return the random non-sybil node.
+     */
     public Node getRandomNodeNotSybil(int target_node)
     {
         int random_guy_not_sybil;
@@ -61,6 +77,13 @@ public class WhanauLookup extends WhanauSetup {
         return result;
     }
 
+    /**
+     * Lookup for a key from a given node (it try do do that for 15 times using
+     * also random walk sampling).
+     * @param u the given starting node
+     * @param key the given key we are searching
+     * @return a LookupResult object which contains the value found and the number of queries done.
+     */
     public LookupResult lookup(Node u,int key)
     {
         int triesNumber = 15, counter = 0, total_messages=0;
@@ -78,6 +101,12 @@ public class WhanauLookup extends WhanauSetup {
         return new LookupResult(value,counter+total_messages);
     }
 
+    /**
+     * Given a source node, search for the given key starting from it.
+     * @param source the source node
+     * @param key the key we are looking for
+     * @return the value associated with the key + the number of messages used.
+     */
     public Pair<String, Integer> _try(Node source, int key)
     {
         WhanauProtocol u = (WhanauProtocol) source.getProtocol(this.pid);
@@ -86,22 +115,42 @@ public class WhanauLookup extends WhanauSetup {
         String value = null;
         int query_count =0;
         do {
+
+            // Get only the fingers which are less than the key
             if (fingers.get(j).first >= key)
             {
                 j--;
                 continue;
             }
 
+            // Choose a finger from my own layers and query it in order to get
+            // the value paired with the key.
             Pair<Node, Integer> choose_fing = this.chooseFinger(source, fingers.get(j).first, key);
+
+            // If we did not find any suitable fingers, then we try again.
             if (choose_fing.first == null || choose_fing.second == null)
-                return null;
+            {
+                j--;
+                continue;
+            }
+
             value = this.query(choose_fing.first, choose_fing.second, key);
+
             query_count++;
             j = j-1;
         } while (value == null && j>=0);
         return new Pair<>(value, query_count);
     }
 
+
+    /**
+     * Choose a finger from a node such that it is the closest to the key we
+     * are looking for.
+     * @param source the node
+     * @param id_layer_zero the id of node which
+     * @param key the key we are looking for
+     * @return a pair (Node, Integer) which contains the suitable fingers. It is null otherwise.
+     */
     private Pair<Node, Integer> chooseFinger(Node source, int id_layer_zero, Integer key)
     {
         ArrayList<ArrayList<Pair<Integer, Node>>> F = new ArrayList<>(Collections.nCopies(this.l, new ArrayList<>()));
@@ -137,22 +186,32 @@ public class WhanauLookup extends WhanauSetup {
 
     }
 
+    /**
+     * Query a given node for a specific key on a specific layer.
+     * @param u the node
+     * @param layer the layer
+     * @param key the key we are searching for
+     * @return the value of the key, null if it was not found
+     */
     private String query(Node u, int layer, int key)
     {
         WhanauProtocol prot = (WhanauProtocol) u.getProtocol(this.pid);
 
-        //System.out.println("Trying node "+String.valueOf(prot.getIdOfLayer(0))+" for key "+key);
+        logger.log("Querying node with id "+prot.getIdOfLayer(layer)+" for key "+key);
 
         String value = prot.getValueOfKey(key, layer);
 
         return value;
     }
 
-    // Key we want to find
+    // Key we want to find (it is computed dynamically from the target node)
     private Integer key;
+
+    /* How many times we search for the key from different nodes */
     private int execution_cycles;
 
-    static private String target_key = "target_key";
     static private String exec_cycles = "execution_cycles";
+
+    private LoggerSingleton logger;
 }
 

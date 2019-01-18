@@ -1,6 +1,7 @@
 package it.unitn.disi.ds2.whanau.controls;
 
 import it.unitn.disi.ds2.whanau.protocols.WhanauProtocol;
+import it.unitn.disi.ds2.whanau.utils.LoggerSingleton;
 import it.unitn.disi.ds2.whanau.utils.Pair;
 import it.unitn.disi.ds2.whanau.utils.RandomSingleton;
 import peersim.config.Configuration;
@@ -39,6 +40,9 @@ public class WhanauSetup implements Control {
 
         this.rng = RandomSingleton.getInstance(Configuration.getInt("random.seed", 1));
 
+        this.logger = LoggerSingleton.getInstance(this.getClass().getSimpleName(),
+                Configuration.getBoolean("enable_logging",false));
+
     }
 
     /**
@@ -50,6 +54,7 @@ public class WhanauSetup implements Control {
         // For each node, store inside them a <key,value>.
         // The key is increasing, while the value it is just
         // a random integer.
+        logger.log("Initializing the stored records of the nodes.");
         for (int i = 0; i < Network.size(); i++) {
             Pair<Integer, String> value = new Pair<Integer, String>(rng.nextInt(Integer.MAX_VALUE), getRandomIpAddress());
             WhanauProtocol node = (WhanauProtocol) Network.get(i).getProtocol(this.pid);
@@ -62,6 +67,7 @@ public class WhanauSetup implements Control {
 
         // Initialize the internal tables of each node
         // (ids, fingers, successors, db).
+        logger.log("Initializing the internal tables (just create them).");
         for (int i = 0; i < Network.size(); i++) {
             WhanauProtocol node = (WhanauProtocol) Network.get(i).getProtocol(this.pid);
             node.setUpInternalTables(this.f, this.s, this.d, this.l, this.w);
@@ -69,6 +75,7 @@ public class WhanauSetup implements Control {
         }
 
         // Set sybil nodes
+        logger.log("Setting the Sybil nodes.");
         int attackEdgesToSet = (int)(totalEdges * this.ratioAttackEdges);
         int counter = 0,index = 0;
         int networkSize = Network.size();
@@ -91,6 +98,7 @@ public class WhanauSetup implements Control {
         this.total_sybil_nodes = index;
 
         // Set up the db table
+        logger.log("Set up the db table");
         for (int i=0; i< Network.size(); i++)
         {
             this.sampleRecords(Network.get(i));
@@ -99,6 +107,7 @@ public class WhanauSetup implements Control {
         // For each of the levels set up the other tables
         for (int i=0; i<l; i++)
         {
+            logger.log("Set up the other tables for layer "+(i+1)+"/"+this.l);
             // Set up the ids for each layer
             for (int j=0; j< Network.size(); j++)
             {
@@ -118,6 +127,7 @@ public class WhanauSetup implements Control {
             }
         }
 
+        logger.log("Sort fingers and successors tables");
         // For each node, sort their fingers and succ tables
         for (int j=0; j< Network.size(); j++)
         {
@@ -280,4 +290,6 @@ public class WhanauSetup implements Control {
     protected int target_key;
     protected int total_sybil_nodes;
     protected boolean cluster_attack;
+
+    protected LoggerSingleton logger;
 }
