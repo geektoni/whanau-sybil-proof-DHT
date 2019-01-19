@@ -201,11 +201,11 @@ public class WhanauSetup implements Control {
         {
             if (n.isSybil() && cluster_attack)
             {
-                // Clever way to choose a Sybil finger
-                id = this.target_key + (rng.nextInt(this.total_sybil_nodes))-total_sybil_nodes/2;
-                if (id == this.target_key)
+                // Clever way to choose a Sybil finger (they will precede the key)
+                id = (this.target_key - rng.nextInt(this.total_sybil_nodes)-1);
+                if (id < 0)
                 {
-                    id = rng.nextInt(total_sybil_nodes/2)+1;
+                    id = Integer.MAX_VALUE+id;
                 }
             } else {
                 id= n.randomRecord().first;
