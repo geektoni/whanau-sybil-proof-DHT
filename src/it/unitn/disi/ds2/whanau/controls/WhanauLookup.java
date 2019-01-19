@@ -110,18 +110,19 @@ public class WhanauLookup extends WhanauSetup {
     public Pair<String, Integer> _try(Node source, int key)
     {
         WhanauProtocol u = (WhanauProtocol) source.getProtocol(this.pid);
-        ArrayList<Pair<Integer, Node>> fingers = u.getFingersForLayer(0);
+        ArrayList<Pair<Integer, Node>> fingers = this.orderFingersCyclic(u.getFingersForLayer(0), key);
         int j = this.f-1;
         String value = null;
         int query_count =0;
+
         do {
 
             // Get only the fingers which are less than the key
-            if (fingers.get(j).first >= key)
-            {
-                j--;
-                continue;
-            }
+            //if (fingers.get(j).first >= key)
+            //{
+            //    j--;
+            //    continue;
+            //}
 
             // Choose a finger from my own layers and query it in order to get
             // the value paired with the key.
@@ -157,7 +158,7 @@ public class WhanauLookup extends WhanauSetup {
         WhanauProtocol u = (WhanauProtocol) source.getProtocol(this.pid);
         for (int i = 0; i < this.l; i++) {
             for (Pair<Integer, Node> x : u.getFingersForLayer(i)) {
-                if (x.first >= id_layer_zero && x.first <= key) {
+                if (this.isBetween(id_layer_zero, x.first, key)) {
                     F.get(i).add(x);
                 }
             }
@@ -202,6 +203,55 @@ public class WhanauLookup extends WhanauSetup {
         String value = prot.getValueOfKey(key, layer);
 
         return value;
+    }
+
+    private ArrayList<Pair<Integer, Node>> orderFingersCyclic(ArrayList<Pair<Integer, Node>> fingers, int key)
+    {
+        ArrayList<Pair<Integer, Node>> tmp = new ArrayList<Pair<Integer, Node>>(fingers.size());
+
+        // Get the index of the first finger with a key less than mine
+        int first_lower_key = this.f-1;
+        while(fingers.get(first_lower_key).first >= key ) {
+            first_lower_key--;
+            if (first_lower_key < 0) break;
+        }
+
+        // All the element have a key less than mine
+        if (first_lower_key == this.f-1)
+            return fingers;
+
+        // All the fingers are greater than my key, therefore
+        // I need to invert the ordering of the elements
+        if (first_lower_key == -1)
+        {
+            for (int i = fingers.size()-1; i >= 0 ; i--) {
+                tmp.add(fingers.get(i));
+            }
+            return tmp;
+        }
+
+        // Populate the array on both sides
+        for (int i = fingers.size()-1; i > first_lower_key ; i--) {
+            tmp.add(fingers.get(i));
+        }
+        for (int i = first_lower_key; i >= 0; i--) {
+            tmp.add(fingers.get(i));
+        }
+
+        return tmp;
+
+    }
+
+    private boolean isBetween(int start_key, int end_key, int target_key)
+    {
+        // It will return false only when 10 0 15
+
+        // Case 1: 10 - 0 - 100
+        return (target_key >= start_key && target_key <= end_key);
+
+        // Case 2:   100 - 0 - 10
+        //return start_key >= target_key && target_key <= end_key;
+
     }
 
     // Key we want to find (it is computed dynamically from the target node)

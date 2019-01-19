@@ -151,6 +151,20 @@ public class WhanauProtocol implements Protocol {
             successor_sample.add(new Pair<>(k, greater_value.get(k)));
             counter++;
         }
+
+        // It means that we reached the end of the stored_records and we
+        // need to read values from the other side.
+        if (counter < T)
+        {
+            SortedMap<Integer, String> next_values = stored_records.subMap(stored_records.firstKey(), key);
+            for (Integer k : next_values.keySet())
+            {
+                // We took basically all the available keys
+                if ( k == key) break;
+                successor_sample.add(new Pair<>(k, next_values.get(k)));
+            }
+        }
+
         return successor_sample;
     }
 
