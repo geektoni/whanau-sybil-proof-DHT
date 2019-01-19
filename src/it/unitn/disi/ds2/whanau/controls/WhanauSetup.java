@@ -24,13 +24,14 @@ public class WhanauSetup implements Control {
      * @param prefix
      */
     public WhanauSetup(String prefix) {
+        int networkSize = Network.size();
         this.pid = Configuration.getPid(prefix + "." + prot);
         this.lid = Configuration.getPid(prefix + "." + prot_link);
-        this.l = Configuration.getInt(prefix + "." + layers, 1);
-        this.w = Configuration.getInt(prefix + "." + mixing_time, (int)(Math.log(Network.size())/Math.log(2)));
+        this.l = Configuration.getInt(prefix + "." + layers, 3);
+        this.w = Configuration.getInt(prefix + "." + mixing_time, (int)(Math.log(networkSize)/Math.log(2)));
         this.d = Configuration.getInt(prefix + "." + database_size, 1);
-        this.f = Configuration.getInt(prefix + "." + max_fingers, 1);
-        this.s = Configuration.getInt(prefix + "." + max_successors, 1);
+        this.f = Configuration.getInt(prefix + "." + max_fingers, (int)(Math.sqrt(this.d*networkSize)));
+        this.s = Configuration.getInt(prefix + "." + max_successors, (int)(Math.sqrt(this.d*networkSize)));
         this.ratioAttackEdges = Configuration.getDouble(prefix + "." + ratio_attack_edges,(double)Network.size()/this.w);
         this.cluster_attack = Configuration.getBoolean(prefix + "." + do_cluster_attack,false);
         this.t_node = Configuration.getInt(prefix+"."+target_node, 10);
