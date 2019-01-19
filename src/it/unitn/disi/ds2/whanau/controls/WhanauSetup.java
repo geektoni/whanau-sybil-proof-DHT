@@ -27,7 +27,7 @@ public class WhanauSetup implements Control {
         this.pid = Configuration.getPid(prefix + "." + prot);
         this.lid = Configuration.getPid(prefix + "." + prot_link);
         this.l = Configuration.getInt(prefix + "." + layers, 1);
-        this.w = Configuration.getInt(prefix + "." + mixing_time, 1);
+        this.w = Configuration.getInt(prefix + "." + mixing_time, (int)(Math.log(Network.size())/Math.log(2)));
         this.d = Configuration.getInt(prefix + "." + database_size, 1);
         this.f = Configuration.getInt(prefix + "." + max_fingers, 1);
         this.s = Configuration.getInt(prefix + "." + max_successors, 1);

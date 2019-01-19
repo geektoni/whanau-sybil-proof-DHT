@@ -34,7 +34,7 @@ public class WhanauWireNetwork extends WireGraph {
         this.networkFilename = Configuration.getString(prefix+"."+socialNetworkFilename,"");
 
         // the 3 is the mean of the avg degree of Youtube and DBLP
-        this.degree_new_node= Configuration.getInt(prefix+"."+degree_node, 3);
+        this.degree_new_node= Configuration.getInt(prefix+"."+degree_node, 2);
 
         // start from a clique of ten nodes, add nodes (with 3 edges each) up to Network.size()
         graphGenerator = new BarabasiAlbertGraphGenerator<Integer, DefaultEdge>(10,

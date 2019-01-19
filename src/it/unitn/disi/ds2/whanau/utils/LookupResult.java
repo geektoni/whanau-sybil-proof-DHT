@@ -7,6 +7,7 @@ import java.util.List;
 
 public class LookupResult {
 
+    //TODO refactor
     public String value;
     public int tries;
 

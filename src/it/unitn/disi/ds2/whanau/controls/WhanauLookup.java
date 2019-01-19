@@ -98,7 +98,7 @@ public class WhanauLookup extends WhanauSetup {
             v = this.randomWalk(u,this.w);
             counter++;
         } while(value == null && counter < triesNumber);
-        return new LookupResult(value,counter+total_messages);
+        return new LookupResult(value,total_messages);
     }
 
     /**
