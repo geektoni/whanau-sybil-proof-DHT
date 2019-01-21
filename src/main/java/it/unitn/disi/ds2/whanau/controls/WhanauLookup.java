@@ -53,7 +53,7 @@ public class WhanauLookup extends WhanauSetup {
 
             logger.log("Cycle "+(i+1)+"/"+execution_cycles+": The element found was "+result.value);
         }
-        String filename = "stats/lookup_n"+this.execution_cycles+"_f"+this.f+"_s"+this.s+".txt";
+        String filename = "stats/lookup_n_"+this.execution_cycles+"_f_"+this.f+"_s_"+this.s+".txt";
         LookupResult.writeOnFile(collectedResults,filename);
 
         return false;
