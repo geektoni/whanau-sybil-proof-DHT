@@ -6,4 +6,11 @@
 
 ## Usage
 
+```bash
+cd whanau-sybil-proof-DHT
+mvn initialize
+mvn compile
+mvn exec:java -Dexec.mainClass="peersim.Simulator" -Dexec.args="whanau.cfg"
+```
+
 ## Contributors
