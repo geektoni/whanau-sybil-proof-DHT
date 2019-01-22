@@ -35,7 +35,6 @@ public class WhanauSetup implements Control {
         this.ratioAttackEdges = Configuration.getDouble(prefix + "." + ratio_attack_edges,(double)Network.size()/this.w);
         this.cluster_attack = Configuration.getBoolean(prefix + "." + do_cluster_attack,false);
         this.t_node = Configuration.getInt(prefix+"."+target_node, 10);
-
         this.rng = RandomSingleton.getInstance(Configuration.getInt("random.seed", 1));
 
         this.logger = LoggerSingleton.getInstance(this.getClass().getSimpleName(),
