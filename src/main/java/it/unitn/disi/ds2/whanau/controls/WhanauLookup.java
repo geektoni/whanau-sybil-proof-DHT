@@ -56,7 +56,7 @@ public class WhanauLookup extends WhanauSetup {
         double size_of_sybils= Network.size()*this.ratioAttackEdges;
         if (this.ratioAttackEdges == -1)
             size_of_sybils = Network.size()/this.w;
-        String filename = "stats/lookup_network_"+Network.size()+"_n_"+this.execution_cycles+"_f_"+this.f+
+        String filename = "stats/lookup_network_"+Network.size()+"_l_"+this.l+"_n_"+this.execution_cycles+"_f_"+this.f+
                 "_s_"+this.s+"_sybil_"+String.format("%.0f",size_of_sybils)+".txt";
         LookupResult.writeOnFile(collectedResults,filename);
 
