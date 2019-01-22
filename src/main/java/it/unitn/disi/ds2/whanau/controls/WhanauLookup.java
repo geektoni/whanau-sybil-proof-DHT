@@ -60,6 +60,16 @@ public class WhanauLookup extends WhanauSetup {
                 "_s_"+this.s+"_sybil_"+String.format("%.0f",size_of_sybils)+".txt";
         LookupResult.writeOnFile(collectedResults,filename);
 
+        logger.log("**********");
+        logger.log("Execution Summary:");
+        for (int i = 0; i < collectedResults.size(); i++)
+        {
+            if (collectedResults.get(i).value.equals("fail"))
+                logger.log("Cycle "+(i+1)+"/"+execution_cycles+": lookup failure (key not found), number of queries done "+collectedResults.get(i).tries+".");
+            else
+                logger.log("Cycle "+(i+1)+"/"+execution_cycles+": key found, number of queries done "+collectedResults.get(i).tries+".");
+        }
+
         return false;
     }
 
@@ -202,7 +212,7 @@ public class WhanauLookup extends WhanauSetup {
     {
         WhanauProtocol prot = (WhanauProtocol) u.getProtocol(this.pid);
 
-        logger.log("Querying node with id "+prot.getIdOfLayer(layer)+" for key "+key);
+        //logger.log("Querying node with id "+prot.getIdOfLayer(layer)+" for key "+key);
 
         String value = prot.getValueOfKey(key, layer);
 
