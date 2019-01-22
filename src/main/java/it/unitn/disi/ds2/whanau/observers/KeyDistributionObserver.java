@@ -22,12 +22,15 @@ public class KeyDistributionObserver implements Control {
     public boolean execute() {
         int size = Network.size();
         int l = Configuration.getInt(layers,-1);
+        // list of lists: list i contains the level-i id for the nodes in the network in index order [Network.get(i)]
         ArrayList<ArrayList<Integer>> layer_distribution = new ArrayList<>();
+        // list of integers: value i (vi) tells that Network.get(i).isSybil() is true if vi==1, otherwise vi=0
         ArrayList<Integer> sybil = new ArrayList<>();
         for (int i = 0; i < l; i++) {
             layer_distribution.add(new ArrayList<>());
         }
 
+        //scan each node and update the corresponding lists
         for (int i = 0; i < size; i++) {
             WhanauProtocol node = (WhanauProtocol) Network.get(i).getProtocol(this.pid);
             ArrayList<Integer> ids = node.getIds();
@@ -37,10 +40,13 @@ public class KeyDistributionObserver implements Control {
             sybil.add(node.isSybil() ? 1 : 0);
         }
 
+        // save the results on the files
         String filename_layers = "stats/layer_distribution.txt";
         String filename_sybil = "stats/sybil.txt";
         try {
 
+            // each line contains the key of the node separated by <whitespace>
+            // the first line contains the layer 0 information, the second refers to layer 1 ...
             BufferedWriter writer = new BufferedWriter(new FileWriter(filename_layers));
             for (ArrayList<Integer> list : layer_distribution) {
                 for (Integer v:list) {
@@ -50,6 +56,7 @@ public class KeyDistributionObserver implements Control {
             }
             writer.close();
 
+            // the sybil file contains a line of 1 and 0 separated by <whitespace> telling whether node i is sybil or not
             writer = new BufferedWriter(new FileWriter(filename_sybil));
             for (Integer x : sybil) {
                 writer.write(x+" ");
