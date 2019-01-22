@@ -54,6 +54,8 @@ public class WhanauLookup extends WhanauSetup {
             logger.log("Cycle "+(i+1)+"/"+execution_cycles+": The element found was "+result.value);
         }
         double size_of_sybils= Network.size()*this.ratioAttackEdges;
+        if (this.ratioAttackEdges == -1)
+            size_of_sybils = Network.size()/this.w;
         String filename = "stats/lookup_network_"+Network.size()+"_n_"+this.execution_cycles+"_f_"+this.f+
                 "_s_"+this.s+"_sybil_"+String.format("%.0f",size_of_sybils)+".txt";
         LookupResult.writeOnFile(collectedResults,filename);

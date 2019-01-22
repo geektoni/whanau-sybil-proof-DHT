@@ -4,7 +4,6 @@ import it.unitn.disi.ds2.whanau.protocols.WhanauProtocol;
 import it.unitn.disi.ds2.whanau.utils.LoggerSingleton;
 import it.unitn.disi.ds2.whanau.utils.Pair;
 import it.unitn.disi.ds2.whanau.utils.RandomSingleton;
-import peersim.cdsim.CDSimulator;
 import peersim.config.Configuration;
 import peersim.core.*;
 
@@ -32,13 +31,15 @@ public class WhanauSetup implements Control {
         this.d = Configuration.getInt(prefix + "." + database_size, 1);
         this.f = Configuration.getInt(prefix + "." + max_fingers, (int)(Math.sqrt(this.d*networkSize)));
         this.s = Configuration.getInt(prefix + "." + max_successors, (int)(Math.sqrt(this.d*networkSize)));
-        this.ratioAttackEdges = Configuration.getDouble(prefix + "." + ratio_attack_edges,(double)Network.size()/this.w);
+        this.ratioAttackEdges = Configuration.getDouble(prefix + "." + ratio_attack_edges,-1.0);
         this.cluster_attack = Configuration.getBoolean(prefix + "." + do_cluster_attack,false);
         this.t_node = Configuration.getInt(prefix+"."+target_node, 10);
         this.rng = RandomSingleton.getInstance(Configuration.getInt("random.seed", 1));
 
         this.logger = LoggerSingleton.getInstance(this.getClass().getSimpleName(),
                 Configuration.getBoolean("enable_logging",false));
+
+        this.logger.log("Table sizes: successors "+this.s+", fingers "+this.f+", layers "+this.l);
 
     }
 
@@ -72,8 +73,12 @@ public class WhanauSetup implements Control {
         }
 
         // Set sybil nodes
-        logger.log("Setting the Sybil nodes.");
-        int attackEdgesToSet = (int)(totalEdges * this.ratioAttackEdges);
+        int attackEdgesToSet=(int)(totalEdges * this.ratioAttackEdges);
+        if (this.ratioAttackEdges == -1.0)
+        {
+            attackEdgesToSet = totalEdges / this.w;
+        }
+        logger.log("Setting the Sybil nodes. Percentage of attack edges: "+(double)attackEdgesToSet*100.0/totalEdges+"%");
         int counter = 0,index = 0;
         int networkSize = Network.size();
         ArrayList<Integer> ids = new ArrayList<>(networkSize);
@@ -105,18 +110,21 @@ public class WhanauSetup implements Control {
         for (int i=0; i<l; i++)
         {
             logger.log("Set up the other tables for layer "+(i+1)+"/"+this.l);
+            logger.log("Layer "+(i+1)+"/"+this.l+": Setting up IDs.");
             // Set up the ids for each layer
             for (int j=0; j< Network.size(); j++)
             {
                 chooseId(Network.get(j), i);
             }
 
+            logger.log("Layer "+(i+1)+"/"+this.l+": Setting up fingers.");
             // Set up the fingers for each layer
             for (int j=0; j< Network.size(); j++)
             {
                 fingers(Network.get(j), i);
             }
 
+            logger.log("Layer "+(i+1)+"/"+this.l+": Setting up successors.");
             // Set up the successors for each layer
             for (int j=0; j< Network.size(); j++)
             {
@@ -240,6 +248,14 @@ public class WhanauSetup implements Control {
         Node target = source;
         IdleProtocol l_source = (IdleProtocol) source.getProtocol(this.lid);
         for (int i = 0; i < length; i++) {
+
+            // If we reach a node that is sybil, we return it immediately, since
+            // we are assuming that if you reach a sybil region, then you won't "come"
+            // out from it.
+            WhanauProtocol checkIfSybil = (WhanauProtocol) target.getProtocol(this.pid);
+            if (checkIfSybil.isSybil())
+                return target;
+
             if (l_source.degree() == 0) return target;
             int random_id = ((rng.nextInt(Integer.MAX_VALUE))%l_source.degree());
             target = l_source.getNeighbor(random_id);
