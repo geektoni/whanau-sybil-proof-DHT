@@ -7,7 +7,6 @@ def perc(x,tot):
 
 MAX_INT = 2147483647
 n_bins = 400
-plt.switch_backend('QT4Agg')
 
 # parse the file that tells wether node i is sybil or not: 1 -> sybil, 0 -> not sybil
 sybil = []
@@ -31,25 +30,21 @@ n_layers = len(layer_distribution)
 n_sybil = np.sum(sybil)
 n_nonsybil = np.sum(not_sybil)
 
-#generates one subplot per layer
 colors = ["blue","red"]
-figs,subplots = plt.subplots(nrows=n_layers,ncols=1)
-subplots = subplots.flatten()
-
 
 bins = np.linspace(0,MAX_INT,n_bins) # possible values: this contains the edge-values for each bin
-for i,p in enumerate(subplots):
+for i in range(n_layers):
+	plt.subplot(n_layers,1,i+1) 	#n_layers rows, 1 column, and current index for the image
 	show=[layer_distribution[i][not_sybil],layer_distribution[i][sybil]]	# pair of arrays that contain respectively the non-sybil node ids and the sybil ones
-	p.hist(show,n_bins,color=colors,stacked=True,label=["honest","sybil"])
-	p.set_title("Layer "+str(i))
-	p.set_yscale("log")		# in order to have a nicer visualization on the clustering attack, axis y is in logscale
+	plt.hist(show,n_bins,color=colors,stacked=True,label=["honest","sybil"])
+	plt.title("Layer "+str(i))
+	plt.yscale("log")		# in order to have a nicer visualization on the clustering attack, axis y is in logscale
 
-subplots[0].legend(loc = "upper right")		# add one legend (that's valid for all the possible plots)
-plt.subplots_adjust(hspace=0.5)
-
-text_info = "Total number of nodes: {}  honest %: {:.2f}  sybil %:{:.2f}".format(n_nodes,perc(n_nonsybil,n_nodes),perc(n_sybil,n_nodes))
-
-mng = plt.get_current_fig_manager()
-plt.gcf().text(0.5,0.03,text_info,horizontalalignment='center',verticalalignment='bottom',fontsize=15)
-mng.window.showMaximized()
+plt.legend(loc = "upper right")		# add one legend (that's valid for all the possible plots)
+plt.subplots_adjust(bottom=0.5)
+fig = plt.gcf()
+fig.set_size_inches(12,9)
+title_info = "Total number of nodes: {}  honest %: {:.2f}  sybil %:{:.2f}".format(n_nodes,perc(n_nonsybil,n_nodes),perc(n_sybil,n_nodes))
+fig.canvas.set_window_title(title_info)
+plt.tight_layout()
 plt.show()

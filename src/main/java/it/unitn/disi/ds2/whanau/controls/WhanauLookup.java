@@ -64,7 +64,7 @@ public class WhanauLookup extends WhanauSetup {
         logger.log("Execution Summary:");
         for (int i = 0; i < collectedResults.size(); i++)
         {
-            if (collectedResults.get(i).value.equals("fail"))
+            if (collectedResults.get(i).value ==null)
                 logger.log("Cycle "+(i+1)+"/"+execution_cycles+": lookup failure (key not found), number of queries done "+collectedResults.get(i).tries+".");
             else
                 logger.log("Cycle "+(i+1)+"/"+execution_cycles+": key found, number of queries done "+collectedResults.get(i).tries+".");
