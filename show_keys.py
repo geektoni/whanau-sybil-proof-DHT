@@ -7,6 +7,7 @@ def perc(x,tot):
 
 MAX_INT = 2147483647
 n_bins = 400
+plt.switch_backend('QT4Agg')
 
 # parse the file that tells wether node i is sybil or not: 1 -> sybil, 0 -> not sybil
 sybil = []
@@ -47,6 +48,7 @@ subplots[0].legend(loc = "upper right")		# add one legend (that's valid for all 
 plt.subplots_adjust(hspace=0.5)
 
 text_info = "Total number of nodes: {}  honest %: {:.2f}  sybil %:{:.2f}".format(n_nodes,perc(n_nonsybil,n_nodes),perc(n_sybil,n_nodes))
+
 mng = plt.get_current_fig_manager()
 plt.gcf().text(0.5,0.03,text_info,horizontalalignment='center',verticalalignment='bottom',fontsize=15)
 mng.window.showMaximized()
