@@ -7,24 +7,28 @@ import java.util.List;
 
 public class LookupResult {
 
-    //TODO refactor
     public String value;
-    public int tries;
+    public int messages;
 
-    public LookupResult(){}
-
-    public LookupResult(String value,int tries)
+    public LookupResult(String value,int messages)
     {
         this.value = value;
-        this.tries = tries;
+        this.messages = messages;
     }
 
+    /**
+     * Static utility method that writes on a file the results
+     * On each line of the output file there will be the number of messages used
+     * or 'fail' if the query has failed
+     * @param list an instance of List<LookupResult> that contains the results of the various queries
+     * @param filename the name of the file on which to print the values
+     */
     public static void writeOnFile(List<LookupResult> list, String filename)
     {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
             for (LookupResult r : list) {
-                String outputLine = r.value == null ? "fail\n" : r.tries+"\n";
+                String outputLine = r.value == null ? "fail\n" : r.messages+"\n";
                 writer.write(outputLine);
             }
             writer.close();
