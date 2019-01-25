@@ -55,7 +55,7 @@ public class WhanauLookup extends WhanauSetup {
         }
 
         String filename = "stats/lookup_network_"+Network.size()+"_l_"+this.l+"_n_"+this.execution_cycles+"_f_"+this.f+
-                "_s_"+this.s+"_attack_edges_perc_"+String.format("%.0f",this.ratioAttackEdges*100)+".txt";
+                "_s_"+this.s+"_attack_edges_perc_"+String.format("%02.0f",this.ratioAttackEdges*100)+".txt";
         LookupResult.writeOnFile(collectedResults,filename);
 
         logger.log("**********");
@@ -63,9 +63,9 @@ public class WhanauLookup extends WhanauSetup {
         for (int i = 0; i < collectedResults.size(); i++)
         {
             if (collectedResults.get(i).value ==null)
-                logger.log("Cycle "+(i+1)+"/"+execution_cycles+": lookup failure (key not found), number of queries done "+collectedResults.get(i).tries+".");
+                logger.log("Cycle "+(i+1)+"/"+execution_cycles+": lookup failure (key not found), number of queries done "+collectedResults.get(i).messages+".");
             else
-                logger.log("Cycle "+(i+1)+"/"+execution_cycles+": key found, number of queries done "+collectedResults.get(i).tries+".");
+                logger.log("Cycle "+(i+1)+"/"+execution_cycles+": key found, number of queries done "+collectedResults.get(i).messages+".");
         }
 
         return false;
