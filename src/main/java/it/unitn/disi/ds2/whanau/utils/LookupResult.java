@@ -27,8 +27,10 @@ public class LookupResult {
     {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+            writer.write("lookup_success,messages\n");
             for (LookupResult r : list) {
-                String outputLine = r.value == null ? "fail\n" : r.messages+"\n";
+                String outputLine = r.value == null ? "false" : "true";
+                outputLine += ","+r.messages+"\n";
                 writer.write(outputLine);
             }
             writer.close();
