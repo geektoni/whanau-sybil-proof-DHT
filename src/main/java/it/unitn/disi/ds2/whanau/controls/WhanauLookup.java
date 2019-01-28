@@ -98,7 +98,7 @@ public class WhanauLookup extends WhanauSetup {
      */
     public LookupResult lookup(Node u,int key)
     {
-        int triesNumber = 15, counter = 0, total_messages=0;
+        int triesNumber = this.f, counter = 0, total_messages=0;
         Pair<String, Integer> res = null;
         String value = null;
         Node v = u;
