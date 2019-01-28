@@ -40,7 +40,7 @@ public class WhanauSetup implements Control {
                 Configuration.getBoolean("enable_logging",false));
 
         this.logger.log("Table sizes: successors "+this.s+", fingers "+this.f+", layers "+this.l);
-
+        this.logger.log("Target node: "+this.t_node);
     }
 
     /**
