@@ -92,6 +92,6 @@ fabric.properties
 !lib/*.jar
 
 target/
-!stats/varying_attack_perc
+!stats/varying_attack_perc/*
 stats/
 
