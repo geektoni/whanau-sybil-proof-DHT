@@ -26,7 +26,7 @@ pattern="lookup_network_(?P<network_size>[0-9]+)_l_(?P<layers>[0-9]+)_n_(?P<exec
 for filename in os.listdir("."):
 	match = re.search(pattern,filename)
 	if not match == None:
-		k = (int(match.group("network_size")),int(match.group("table_size")),int(match.group("attack_edges")))
+		k = (int(match.group("network_size")),int(match.group("table_size")),int(match.group("attack_edges")),int(match.group("layers")))
 		data = []
 		with open(filename,"r") as file:
 			file.readline() #skip header
@@ -38,6 +38,7 @@ for filename in os.listdir("."):
 
 # 1st experiment
 # x table size, y mean value of messages, 1 line for each attack edge perc
+layers = 3
 table_sizes = [10,50,100,500,1000,2000]
 attack_edges_percs = [1,10,15]
 network_sizes = [10**4,10**5]
@@ -48,7 +49,7 @@ net_size = 10000
 for ae in attack_edges_percs:
 	line = []
 	for t in table_sizes:
-		k = (net_size,t,ae)
+		k = (net_size,t,ae,layers)
 		data = msg_stats[k]
 		line.append(np.median(data))
 	plt.plot(table_sizes,line,marker="o",label=str(ae)+"%")
@@ -61,7 +62,7 @@ plt.show()
 def plot_messages_wrt_aep(attack_edges_percs,network_size,table_size):
 	line = []
 	for ae in attack_edges_percs:
-		k = (network_size,table_size,ae)
+		k = (network_size,table_size,ae,layers)
 		data = msg_stats[k]
 		line.append(np.mean(data))
 	plt.plot(attack_edges_percs,line,marker="o",label=str(network_size))
@@ -79,15 +80,37 @@ plt.legend()
 plt.show()
 
 # 3rd experiment
+# x size of the net, y mean number of messages
 net_table_sizes = [(100,10),(1000,32),(10000,100),(100000,316)]
 net_sizes = [100,1000,10000,100000]
 attack_edges = 0
 
 line = []
 for net_size,table_size in net_table_sizes:
-	k = (net_size,table_size,attack_edges)
+	k = (net_size,table_size,attack_edges,layers)
 	data = msg_stats[k]
 	line.append(np.mean(data))
 
 plt.plot(net_sizes,line,marker="o")
 plt.show()
+
+# 4th experiment
+# x attack_edges perc, y mean messages, one line per level of layers
+def plot_messages_wrt_layers(network_size,table_size,attack_edges_percs,layers):
+	for l in layers:
+		line = []
+		for ae in attack_edges_percs:
+			k = (network_size,table_size,ae,l)
+			line.append(np.mean(msg_stats[k]))
+		
+		plt.plot(attack_edges_percs,line,marker="o",label=str(l))
+	plt.legend()
+	plt.show()
+
+
+network_size = 10000
+table_size = 100
+layers = [1,3,5,7]
+attack_edges_percs = [0,10,20,30]
+
+plot_messages_wrt_layers(network_size,table_size,attack_edges_percs,layers)
