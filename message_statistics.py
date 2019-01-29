@@ -76,7 +76,7 @@ def plot_messages_wrt_aep(attack_edges_percs,network_size,table_size):
 	plt.plot(attack_edges_percs,line,marker="o",label=str(network_size))
 
 
-attack_edges_percs = [0,1,10,20,30,50]
+attack_edges_percs = [0,1,10,15,20,25]
 network_size = 10 ** 4 
 table_size = 100
 plot_messages_wrt_aep(attack_edges_percs,network_size,table_size)
@@ -89,7 +89,7 @@ plt.show()
 
 # 3rd experiment
 # x size of the net, y median number of messages
-net_table_sizes = [(100,10),(1000,32),(10000,100),(100000,316)]
+net_table_sizes = [(5000,70),(10000,100),(100000,316)]
 net_sizes = [100,1000,10000,100000]
 attack_edges = 0
 
@@ -121,6 +121,6 @@ def plot_failures_wrt_layers(network_size,table_size,attack_edges_percs,layers):
 network_size = 10000
 table_size = 100
 layers = [1,3,5,7]
-attack_edges_percs = [0,10,20,30]
+attack_edges_percs = [0,10,15,20,25]
 
 plot_failures_wrt_layers(network_size,table_size,attack_edges_percs,layers)
