@@ -45,7 +45,7 @@ for filename in os.listdir("."):
 		msg_outcomes[k] = outcome
 
 # 1st experiment
-# x table size, y mean value of messages, 1 line for each attack edge perc
+# x table size, y median value of messages, 1 line for each attack edge perc
 layers = 3
 table_sizes = [10,50,100,500,1000,2000]
 attack_edges_percs = [1,10,15]
@@ -66,13 +66,13 @@ plt.legend()
 plt.show()
 
 # 2nd experiment
-# x attack_edges perc, y mean number of messages, 1 line per network size 
+# x attack_edges perc, y median number of messages, 1 line per network size 
 def plot_messages_wrt_aep(attack_edges_percs,network_size,table_size):
 	line = []
 	for ae in attack_edges_percs:
 		k = (network_size,table_size,ae,layers)
 		data = msg_stats[k]
-		line.append(np.mean(data))
+		line.append(np.median(data))
 	plt.plot(attack_edges_percs,line,marker="o",label=str(network_size))
 
 
@@ -88,7 +88,7 @@ plt.legend()
 plt.show()
 
 # 3rd experiment
-# x size of the net, y mean number of messages
+# x size of the net, y median number of messages
 net_table_sizes = [(100,10),(1000,32),(10000,100),(100000,316)]
 net_sizes = [100,1000,10000,100000]
 attack_edges = 0
@@ -97,14 +97,14 @@ line = []
 for net_size,table_size in net_table_sizes:
 	k = (net_size,table_size,attack_edges,layers)
 	data = msg_stats[k]
-	line.append(np.mean(data))
+	line.append(np.median(data))
 	
 plt.xscale("log")
 plt.plot(net_sizes,line,marker="o")
 plt.show()
 
 # 4th experiment
-# x attack_edges perc, y mean messages, one line per level of layers
+# x attack_edges perc, y hit percentage, one line per level of layers
 def plot_failures_wrt_layers(network_size,table_size,attack_edges_percs,layers):
 	for l in layers:
 		line = []
