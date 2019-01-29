@@ -259,7 +259,13 @@ public class WhanauLookup extends WhanauSetup {
         // It will return false only when 10 0 15
 
         // Case 1: 10 - 0 - 100
-        return (target_key >= start_key && target_key <= end_key);
+        boolean between;
+        if(start_key<end_key) {
+            between = target_key >= start_key && target_key <= end_key;
+        } else {
+            between = !(target_key >= start_key && target_key <= end_key);
+        }
+        return between;
 
         // Case 2:   100 - 0 - 10
         //return start_key >= target_key && target_key <= end_key;
