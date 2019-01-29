@@ -60,8 +60,11 @@ for ae in attack_edges_percs:
 		k = (net_size,t,ae,layers)
 		data = msg_stats[k]
 		line.append(np.median(data))
-	plt.plot(table_sizes,line,marker="o",label=str(ae)+"%")
+	plt.plot(table_sizes,line,marker="o",label=str(ae)+"% attack edges")
 
+plt.xlabel("Finger table size")
+plt.ylabel("Median number of messages")
+plt.xscale("log")
 plt.legend()
 plt.show()
 
@@ -73,7 +76,7 @@ def plot_messages_wrt_aep(attack_edges_percs,network_size,table_size):
 		k = (network_size,table_size,ae,layers)
 		data = msg_stats[k]
 		line.append(np.median(data))
-	plt.plot(attack_edges_percs,line,marker="o",label=str(network_size))
+	plt.plot(attack_edges_percs,line,marker="o",label=str(network_size)+" nodes")
 
 
 attack_edges_percs = [0,1,10,15,20,25]
@@ -84,43 +87,52 @@ plot_messages_wrt_aep(attack_edges_percs,network_size,table_size)
 network_size = 10 ** 5
 table_size = 316
 plot_messages_wrt_aep(attack_edges_percs,network_size,table_size)
+
+plt.xlabel("Attack edges %")
+plt.ylabel("Median number of messages")
+plt.yscale("log")
 plt.legend()
 plt.show()
 
 # 3rd experiment
 # x size of the net, y median number of messages
 net_table_sizes = [(5000,70),(10000,100),(100000,316)]
-net_sizes = [100,1000,10000,100000]
+net_sizes = [5000,10000,100000]
 attack_edges = 0
 
-line = []
+boxplot_data = []
 for net_size,table_size in net_table_sizes:
 	k = (net_size,table_size,attack_edges,layers)
 	data = msg_stats[k]
-	line.append(np.median(data))
-	
-plt.xscale("log")
-plt.plot(net_sizes,line,marker="o")
+	boxplot_data.append(data)
+
+
+plt.boxplot(boxplot_data)
+plt.xticks(list(range(1,len(net_sizes)+1)),net_sizes) 
+plt.xlabel("Network size")
+plt.ylabel("Number of messages")
+plt.title("Performance with no attack")
 plt.show()
 
 # 4th experiment
 # x attack_edges perc, y hit percentage, one line per level of layers
-def plot_failures_wrt_layers(network_size,table_size,attack_edges_percs,layers):
-	for l in layers:
-		line = []
-		for ae in attack_edges_percs:
-			k = (network_size,table_size,ae,l)
-			outcomes = msg_outcomes[k]
-			value = float(np.sum(outcomes))/len(outcomes)
-			line.append(value)
-		plt.plot(attack_edges_percs,line,marker="o",label=str(l))
-	plt.legend()
-	plt.show()
-
-
 network_size = 10000
 table_size = 100
 layers = [1,3,5,7]
 attack_edges_percs = [0,10,15,20,25]
 
-plot_failures_wrt_layers(network_size,table_size,attack_edges_percs,layers)
+
+for l in layers:
+	line = []
+	for ae in attack_edges_percs:
+		k = (network_size,table_size,ae,l)
+		outcomes = msg_outcomes[k]
+		value = float(np.sum(outcomes))*100/len(outcomes)
+		line.append(value)
+	plt.plot(attack_edges_percs,line,marker="o",label=str(l)+" layer(s)")
+
+plt.xlabel("Attack edges %")
+plt.ylabel("Percentage of successful lookup")
+plt.ylim(0,105)
+plt.legend()
+plt.show()
