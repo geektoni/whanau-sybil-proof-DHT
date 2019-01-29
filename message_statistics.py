@@ -49,7 +49,7 @@ for filename in os.listdir("."):
 		msg_stats[k] = data
 		msg_outcomes[k] = outcome
 
-plt.rcParams.update({'font.size': 16})
+plt.rcParams.update({'font.size': 15})
 # 1st experiment
 # x table size, y median value of messages, 1 line for each attack edge perc
 layers = 3
@@ -102,8 +102,8 @@ show()
 
 # 3rd experiment
 # x size of the net, y median number of messages
-net_table_sizes = [(5000,70),(10000,100),(100000,316)]
-net_sizes = [5000,10000,100000]
+net_table_sizes = [(5000,70),(10000,100),(100000,316),(200000,447)]
+net_sizes = [5000,10000,100000,200000]
 attack_edges = 0
 
 boxplot_data = []
