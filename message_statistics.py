@@ -4,6 +4,11 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 
+def show():
+	fig = plt.gcf()
+	fig.set_size_inches(7,6)
+	plt.show()
+
 def parse_line(line):
 	t = line.strip().split(",")
 	success = t[0]=="true"
@@ -44,6 +49,7 @@ for filename in os.listdir("."):
 		msg_stats[k] = data
 		msg_outcomes[k] = outcome
 
+plt.rcParams.update({'font.size': 16})
 # 1st experiment
 # x table size, y median value of messages, 1 line for each attack edge perc
 layers = 3
@@ -66,7 +72,7 @@ plt.xlabel("Finger table size")
 plt.ylabel("Median number of messages")
 plt.xscale("log")
 plt.legend()
-plt.show()
+show()
 
 # 2nd experiment
 # x attack_edges perc, y median number of messages, 1 line per network size 
@@ -92,7 +98,7 @@ plt.xlabel("Attack edges %")
 plt.ylabel("Median number of messages")
 plt.yscale("log")
 plt.legend()
-plt.show()
+show()
 
 # 3rd experiment
 # x size of the net, y median number of messages
@@ -112,7 +118,7 @@ plt.xticks(list(range(1,len(net_sizes)+1)),net_sizes)
 plt.xlabel("Network size")
 plt.ylabel("Number of messages")
 plt.title("Performance with no attack")
-plt.show()
+show()
 
 # 4th experiment
 # x attack_edges perc, y hit percentage, one line per level of layers
@@ -135,4 +141,4 @@ plt.xlabel("Attack edges %")
 plt.ylabel("Percentage of successful lookup")
 plt.ylim(0,105)
 plt.legend()
-plt.show()
+show()
