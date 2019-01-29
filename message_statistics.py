@@ -6,12 +6,13 @@ import matplotlib.pyplot as plt
 
 def parse_line(line):
 	t = line.strip().split(",")
-	success = bool(t[0])
+	success = t[0]=="true"
 	msgs = int(t[1])
 	return (success,msgs)
 
 if len(sys.argv) != 2:
 	stats_dir = "stats/varying_attack_perc/"
+	print("To use a different directory for the stats file use: python message_statistics.py <path>")
 else:
 	stats_dir = sys.argv[1]
 
@@ -19,7 +20,7 @@ print("Using dir: ",stats_dir)
 os.chdir(stats_dir)
 
 msg_stats = {}
-
+msg_outcomes = {}
 pattern="lookup_network_(?P<network_size>[0-9]+)_l_(?P<layers>[0-9]+)_n_(?P<exec_cycles>[0-9]+)"\
 		"_f_(?P<table_size>[0-9]+)_s_(?P<successors>[0-9]+)_attack_edges_perc_(?P<attack_edges>[0-9]+).txt"
 
@@ -27,14 +28,21 @@ for filename in os.listdir("."):
 	match = re.search(pattern,filename)
 	if not match == None:
 		k = (int(match.group("network_size")),int(match.group("table_size")),int(match.group("attack_edges")),int(match.group("layers")))
+		if k in msg_stats:
+			print("Conflicting files on\n\tnetwork_size {} table_size {} attack_edges {} layers {}".format(k[0],k[1],k[2],k[3]))
+			print("Delete unwanted files")
+			exit()
 		data = []
+		outcome = []
 		with open(filename,"r") as file:
 			file.readline() #skip header
 			for line in file:
 				success,value = parse_line(line)
 				data.append(value)
+				outcome.append(success)
 
 		msg_stats[k] = data
+		msg_outcomes[k] = outcome
 
 # 1st experiment
 # x table size, y mean value of messages, 1 line for each attack edge perc
@@ -90,19 +98,21 @@ for net_size,table_size in net_table_sizes:
 	k = (net_size,table_size,attack_edges,layers)
 	data = msg_stats[k]
 	line.append(np.mean(data))
-
+	
+plt.xscale("log")
 plt.plot(net_sizes,line,marker="o")
 plt.show()
 
 # 4th experiment
 # x attack_edges perc, y mean messages, one line per level of layers
-def plot_messages_wrt_layers(network_size,table_size,attack_edges_percs,layers):
+def plot_failures_wrt_layers(network_size,table_size,attack_edges_percs,layers):
 	for l in layers:
 		line = []
 		for ae in attack_edges_percs:
 			k = (network_size,table_size,ae,l)
-			line.append(np.mean(msg_stats[k]))
-		
+			outcomes = msg_outcomes[k]
+			value = float(np.sum(outcomes))/len(outcomes)
+			line.append(value)
 		plt.plot(attack_edges_percs,line,marker="o",label=str(l))
 	plt.legend()
 	plt.show()
@@ -113,4 +123,4 @@ table_size = 100
 layers = [1,3,5,7]
 attack_edges_percs = [0,10,20,30]
 
-plot_messages_wrt_layers(network_size,table_size,attack_edges_percs,layers)
+plot_failures_wrt_layers(network_size,table_size,attack_edges_percs,layers)
