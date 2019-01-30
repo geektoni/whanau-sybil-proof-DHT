@@ -9,6 +9,9 @@ import peersim.core.Node;
 
 import java.util.ArrayList;
 
+/**
+ * Class which collects statistics about a node in the network.
+ */
 public class WhanauObserver implements Control {
 
     public WhanauObserver(String prefix) {

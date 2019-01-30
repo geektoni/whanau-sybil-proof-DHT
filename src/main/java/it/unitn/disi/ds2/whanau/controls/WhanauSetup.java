@@ -20,7 +20,7 @@ public class WhanauSetup implements Control {
 
     /**
      * Constructor
-     * @param prefix
+     * @param prefix string prefix
      */
     public WhanauSetup(String prefix) {
         int networkSize = Network.size();
@@ -151,7 +151,7 @@ public class WhanauSetup implements Control {
     }
 
     /**
-     * Set up the successors <key, value> pairs given a starting
+     * Set up the successors (key, value) pairs given a starting
      * node and the target layer.
      * @param node starting node
      * @param layer the layer we are considering
@@ -225,7 +225,7 @@ public class WhanauSetup implements Control {
 
     /**
      * Sample records with a random walk starting from the given node.
-     * @param node
+     * @param node a network node
      */
     protected void sampleRecords(Node node) {
         for (int i =0; i<d; i++)
@@ -267,7 +267,7 @@ public class WhanauSetup implements Control {
 
     /**
      * Get a randomly generated IP address
-     * @return
+     * @return a string representing the IP.
      */
     protected String getRandomIpAddress()
     {

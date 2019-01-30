@@ -11,6 +11,10 @@ import peersim.core.Node;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/***
+ * Class used to implement the lookup() procedure of Whanau. It is also
+ * used to perform the various experiments.
+ */
 public class WhanauLookup extends WhanauSetup {
 
     public WhanauLookup(String prefix) {
@@ -26,7 +30,7 @@ public class WhanauLookup extends WhanauSetup {
      * which is not sybil. The action is done several time to collect
      * an estimate about how many messages we send in order to get the
      * key associated value.
-     * @return
+     * @return this method returns always false.
      */
     public boolean execute()
     {

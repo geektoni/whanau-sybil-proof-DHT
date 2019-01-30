@@ -48,7 +48,7 @@ public class WhanauProtocol implements Protocol {
 
     /**
      * Add a value to the record stored by this node if not already present.
-     * @param value Pair <key, value> which will be memorized.
+     * @param value Pair (key, value) which will be memorized.
      */
     public void addToStoredRecords(Pair<Integer, String>value) {
         if (!this.stored_records.containsKey(value.first)) {
@@ -58,7 +58,7 @@ public class WhanauProtocol implements Protocol {
 
     /**
      * Extract a random record from the node database.
-     * @return a random <key,value pair>
+     * @return a random (key,value pair)
      */
     public Pair<Integer, String> randomRecord()
     {

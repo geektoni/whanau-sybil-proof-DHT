@@ -10,6 +10,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Class used to collect the key distribution over all the layers for each node.
+ */
 public class KeyDistributionObserver implements Control {
 
     public KeyDistributionObserver(String prefix) {
