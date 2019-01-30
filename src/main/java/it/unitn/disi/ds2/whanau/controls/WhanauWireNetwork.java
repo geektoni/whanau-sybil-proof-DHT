@@ -101,7 +101,7 @@ public class WhanauWireNetwork extends WireGraph {
     {
         org.jgrapht.Graph<Integer, DefaultEdge> g= new DefaultUndirectedGraph<Integer,DefaultEdge>(DefaultEdge.class);
         try {
-            FileReader fr = new FileReader("social-graphs/" + this.networkFilename);
+            FileReader fr = new FileReader(this.networkFilename);
             Scanner scanner = new Scanner(new BufferedReader(fr));
             long nodeNumber = scanner.nextLong();
             long edgeNumber = scanner.nextInt();
