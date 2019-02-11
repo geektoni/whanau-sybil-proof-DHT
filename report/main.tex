@@ -1,0 +1,87 @@
+% This is samplepaper.tex, a sample chapter demonstrating the
+% LLNCS macro package for Springer Computer Science proceedings;
+% Version 2.20 of 2017/10/04
+%
+\documentclass[conference, 10pt]{IEEEtran}
+\usepackage{hyperref}
+\usepackage[section]{algorithm}
+\usepackage{algorithmic}
+\usepackage[utf8]{inputenc}
+%
+\usepackage{graphicx}
+% Used for displaying a sample figure. If possible, figure files should
+% be included in EPS format.
+%
+% If you use the hyperref package, please uncomment the following line
+% to display URLs in blue roman font according to Springer's eBook style:
+\renewcommand\UrlFont{\color{blue}\rmfamily}
+
+\begin{document}
+%
+\title{A Peersim implementation of Wh\={a}nau \\{\Large A Sybil-proof Distributed Hash Table}}
+%
+
+\author{\IEEEauthorblockN{Giovanni De Toni}
+\IEEEauthorblockA{\textit{Dept. of Information Engineering and Computer Science} \\
+\textit{University of Trento}\\
+Trento, Italy \\
+giovanni.detoni@studenti.unitn.it}
+\and
+\IEEEauthorblockN{Andrea Zampieri}
+\IEEEauthorblockA{\textit{Dept. of Information Engineering and Computer Science} \\
+\textit{University of Trento}\\
+Trento, Italy \\
+andrea.zampieri@studenti.unitn.it}}
+%
+%\authorrunning{Giovanni De Toni and Andrea Zampieri}
+% First names are abbreviated in the running head.
+% If there are more than two authors, 'et al.' is used.
+%
+%\institute{University of Trento, Via Sommarive 5, Povo, Italy 
+%\email{\{giovanni.detoni,andrea.zampieri\}@studenti.unitn.it}}
+%
+\maketitle              % typeset the header of the contribution
+%
+\begin{abstract}
+Whanau is a novel routing protocol for distributed hash tables (DHTs) that is efficient and robust against Sybil attacks. We replicated the original paper providing one of the first Java-based implementations of the protocol. Several experiments were conducted in order to assess the real efficiency of the protocol on large-scale systems by using the Peersim framework.  We tested its resilience under the presence of clustering attacks.
+\end{abstract}
+
+\begin{IEEEkeywords} Distributed Systems, Distributed Hash Tables, Sybil Attack,  Peersim
+\end{IEEEkeywords}
+%
+%
+%
+\section{Introduction}
+
+\input{intro.tex}
+
+\section{Implementation\label{impl}}
+
+\input{implementation.tex}
+
+\section{Experiments\label{exper}}
+
+\input{experiments.tex}
+
+\section{Conclusions\label{concl}}
+
+\input{conclusions.tex}
+
+\section{Acknowledgements}
+
+Figures \ref{fig:sparse_cut}, \ref{fig:layers}, \ref{fig:whanau_protocol} were taken from the original Whanau paper \cite{lesniewski2010whanau} and the copyrights belongs to the images owners. The pseudocodes explaining the \textsc{lookup} and \textsc{setup} procedure were taken from the same paper.\\
+The sections describing the behaviour, the principles, the assumptions and the main ideas behind Whanau are inspired to the original work \cite{lesniewski2010whanau}.
+
+%
+% ---- Bibliography ----
+%
+% BibTeX users should specify bibliography style 'splncs04'.
+% References will then be sorted and formatted in the correct style.
+%
+
+\bibliographystyle{unsrt}
+\bibliography{bibfile}
+
+
+%
+\end{document}
