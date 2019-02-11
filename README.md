@@ -7,7 +7,7 @@ Sybil attacks. We replicated the original paper [1] providing one of the first o
 the protocol. We performed several experiments in  order  to  assess  the  real  efficiency  of  the protocol on
 large-scale systems by using the Peersim framework. We tested its resilience under the presence of clustering attacks.
 
-A report which summarize Whanau's procedure and the results can be found [here]().
+A report which summarize Whanau's procedure and the results can be found [here](https://github.com/geektoni/whanau-sybil-proof-DHT/blob/master/report/report.pdf).
 
 [1] Lesniewski-Laas, Christopher, and M. Frans Kaashoek. "Whanau: A sybil-proof distributed hash table." (2010).
 
